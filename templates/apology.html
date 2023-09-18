@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+    Apology
+    
+{% endblock %}
+
+{% block accountname %}{{accountname}}{% endblock %}
+
+{% block main %}
+
+    <!-- https://memegen.link/ -->
+    <img alt="{{ message }}" class="border img-fluid" style="max-width: 50%; max-height: auto;"
+        src="https://api.memegen.link/images/ski/_/{{ message }}.png?token=mmis6tqoer1wticvvdhb" title="{{ message }}">
+
+{% endblock %}

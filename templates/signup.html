@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+    Sign Up
+
+{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #f2f2f2;
+        text-align: center;
+    }
+
+    .container {
+        font-size: 20px;
+        max-width: 400px;
+        margin: 5px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        font-size: 40px;
+    }
+
+    .formitem {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .btn {
+        display: inline-block;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .hint-text {
+        font-size: 14px; 
+        color: #777;   
+        margin-left: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block accountname %}{{accountname}}{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <h2>Sign Up</h2>
+    <form action="/signup" method="post">
+        <div class="formitem">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" name="newUsername" required>
+        </div>
+        <div class="formitem">
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            <span class="hint-text" for="username">Password must be at least 8 charachters or longer</span>
+        </div>
+        <div class="formitem">
+            <label for="confirm">Re-Write Password:</label>
+            <input type="password" id="confirm" name="confirm" required>
+        </div>
+        <div class="formitem">
+            <input type="submit" value="Sign Up" class="btn">
+        </div>
+    </form>
+</div>
+
+{% endblock %}
