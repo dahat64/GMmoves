@@ -1,0 +1,27 @@
+nav .navbar-brand {
+    font-size: xx-large;
+}
+
+#maingame {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.nav-item {
+    font-size: 19px !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    /* Ensure the body takes at least the full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 0.9;
+    /* Allow the main content to expand and push the footer down */
+}
