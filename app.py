@@ -40,13 +40,13 @@ def index():
     return render_template("index.html", accountname = person[0]['username'])
 
 @app.route("/signin", methods=["GET", "POST"])
-@limiter.limit("1 per minute")
+@limiter.limit("12 per day")
 def signin():
     session.clear()
-    rows = db.execute("SELECT * FROM users")
     if request.method == "GET":
         return render_template("signin.html")
     else:
+        rows = db.execute("SELECT * FROM users")
         username = request.form.get("username")
         password = request.form.get("password")
         if username == "" or password == "":
@@ -57,11 +57,12 @@ def signin():
         if check_password_hash(person[0]['hash'], password) == False:
             return apology("Invalid username or password", 400)
         session['user_id'] = person[0]['id']
-        return render_template("message.html", message = "Welcome back ", message2=person[0]['username'], accountname = person[0]['username'])
+        return render_template("message.html", message = "Welcome back (" + person[0]['username'] + ")!"
+  , accountname = person[0]['username'])
         
 
 @app.route("/signup", methods=["GET", "POST"])
-@limiter.limit("10 per hour")
+@limiter.limit("10 per day")
 def signup():
     session.clear()
     if request.method == "GET":
@@ -75,8 +76,11 @@ def signup():
         rows = db.execute("SELECT * FROM users")
         if duplicateUsernameCheck(username, rows) == True:
             return apology("Username unavailable", 400)
+        if len(password) < 8:
+            return apology("password too short")
         if password != confirm: 
             return apology("password did not match", 400)
+        
         db.execute("INSERT INTO users(username, hash) VALUES(?,?)", username, generate_password_hash(password))
         person = db.execute("SELECT * FROM users WHERE username = ?", username)
         session['user_id'] = person[0]['id']
@@ -134,6 +138,27 @@ def changepassword():
         db.execute("UPDATE users SET hash = ? WHERE id = ?", generate_password_hash(newpassword), session['user_id'])
         message = "Password successfully changed"
         return render_template("message.html", message = message, accountname = person[0]['username'])
+
+@app.route("/deleteaccount", methods=["get", "post"])
+@login_required
+def deleteaccount():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+    if request.method == "GET":
+        return render_template("deleteaccount.html", accountname = person[0]['username'])
+    else:
+        password = request.form.get("password")
+        confirm = request.form.get("confirm")
+        if password == "" or confirm == "":
+            return apology("Please fill in the form", 400)
+        if password != confirm:
+            return apology("Password did not match re-write", 400)
+        if check_password_hash(person[0]['hash'], password) == False:
+            return apology("Incorrect Password", 400)
+        db.execute("DELETE FROM users WHERE id = ?", session['user_id'])
+        session.clear()
+        return render_template("message.html", message="Account successfuly deleted!")
+            
+        
 
 if __name__ == '__main__':
     app.run()

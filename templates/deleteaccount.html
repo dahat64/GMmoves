@@ -2,7 +2,7 @@
 
 {% block title %}
 
-    Change Password
+    Delete Account
 
 {% endblock %}
 
@@ -15,8 +15,9 @@
     }
 
     .container {
+        font-size: 20px;
         max-width: 400px;
-        margin: 35px auto;
+        margin: 5px auto;
         padding: 20px;
         background-color: #ffffff;
         border-radius: 5px;
@@ -25,6 +26,7 @@
 
     h2 {
         margin-bottom: 20px;
+        font-size: 40px;
     }
 
     .formitem {
@@ -57,6 +59,12 @@
     .btn:hover {
         background-color: #0056b3;
     }
+
+    .hint-text {
+        font-size: 14px;
+        color: #777;
+        margin-left: 5px;
+    }
 </style>
 {% endblock %}
 
@@ -65,23 +73,19 @@
 {% block main %}
 
 <div class="container">
-    <h2>Change Password</h2>
-    <form action="/changepassword" method="post">
+    <h2>Delete account</h2>
+    <h3 style="font-size: 20px; color: red;">WARNING: ONCE YOU CLICK "DELETE ACCOUNT" YOU CAN'T GET YOUR ACCOUNT BACK</h3>
+    <form action="/deleteaccount" method="post">
         <div class="formitem">
-            <label for="oldpassword">Old Password:</label>
-            <input type="password" id="password" name="oldpassword" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
         </div>
         <div class="formitem">
-            <label for="password">New Password:</label>
-            <input type="password" id="password" name="newpassword" required>
-            <span class="hint-text" for="username">Password must be at least 8 charachters or longer</span>
+            <label for="confirm">Re-Write Password:</label>
+            <input type="password" id="confirm" name="confirm" required>
         </div>
         <div class="formitem">
-            <label for="confirm">Re-write New Password:</label>
-            <input type="password" id="password" name="confirm" required>
-        </div>
-        <div class="formitem">
-            <input type="submit" value="Change Password" class="btn">
+            <input type="submit" value="Delete Account" class="btn" style="background-color: red; color: white;">
         </div>
     </form>
 </div>
