@@ -5,6 +5,11 @@ import requests
 import subprocess
 import urllib
 import uuid
+import chess
+import chess.engine
+import os
+import sys
+import io
 
 from flask import redirect, render_template, session
 from functools import wraps
@@ -41,3 +46,41 @@ def duplicateUsernameCheck(username, rows):
         if user['username'] == username:
             return True
     return False
+
+
+def analyze_position(fen_position, depth=20):
+    """
+    Analyze a chess position using the Stockfish engine.
+
+    Args:
+        fen_position (str): FEN (Forsyth-Edwards Notation) string representing the chess position.
+        depth (int): The depth to which Stockfish should analyze the position.
+
+    Returns:
+        dict: A dictionary containing the analysis information.
+    """
+
+    # Redirect stdout to an in-memory buffer
+
+    with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
+        engine.configure({"Debug Log File": ""})
+        board = chess.Board(fen_position)
+
+        # Perform the analysis
+        analysis = engine.analyse(board, chess.engine.Limit(depth=20))
+        # Get the analysis results
+        eval = analysis["score"].relative.score() / 100
+        best_move = analysis["pv"][0]
+        best_move_san = board.san(chess.Move.from_uci(str(best_move)))
+        info = {}
+        info["best_move"] = best_move_san
+        info["evaluation"] = eval
+        print(info)
+        return info
+
+
+    
+
+
+
+

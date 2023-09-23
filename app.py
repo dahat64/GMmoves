@@ -2,8 +2,9 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position
 from flask_limiter import Limiter
+import subprocess
 
 app = Flask(__name__)
 
@@ -37,7 +38,8 @@ def after_request(response):
 @login_required
 def index():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
-    return render_template("index.html", accountname = person[0]['username'])
+    info = analyze_position("rnbqkb1r/pp2pppp/2p5/3p2B1/3Pn2P/5N2/PPPNPPP1/R2QKB1R b KQkq - 0 5", 20)
+    return render_template("index.html", accountname = person[0]['username'], info = info)
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")
@@ -158,7 +160,12 @@ def deleteaccount():
         session.clear()
         return render_template("message.html", message="Account successfuly deleted!")
             
-        
+@app.route("/about")
+@login_required
+def about():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+    return render_template("about.html", accountname = person[0]['username'])
+
 
 if __name__ == '__main__':
     app.run()
