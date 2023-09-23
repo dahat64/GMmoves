@@ -8,9 +8,20 @@
 
 {% block accountname %}{{accountname}}{% endblock %}
 
+{% block head %}
+<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block main %}
 
     <h1>Nice</h1>
     <h3>{{info}}</h3>
-
+    <div style=" display: flex; justify-content: center; align-items: center;">
+        <div id="board" style="width: 400px;"></div>
+    </div>
+    <div id="hidden-info" style="display: none;">{{fen}}</div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
+    <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}

@@ -2,11 +2,12 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn
 from flask_limiter import Limiter
 import subprocess
 
 app = Flask(__name__)
+app.static_folder = 'static'
 
 limiter = Limiter(
     key_func=lambda: request.remote_addr,
@@ -38,8 +39,9 @@ def after_request(response):
 @login_required
 def index():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
-    info = analyze_position("rnbqkb1r/pp2pppp/2p5/3p2B1/3Pn2P/5N2/PPPNPPP1/R2QKB1R b KQkq - 0 5", 20)
-    return render_template("index.html", accountname = person[0]['username'], info = info)
+    fen = random_fen_from_pgn('ct-2750-2864-2023.5.9.pgn')
+    info = analyze_position(fen, 20)
+    return render_template("index.html", accountname = person[0]['username'], info = info, fen = fen)
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")

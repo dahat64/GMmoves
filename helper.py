@@ -11,7 +11,7 @@ import os
 import sys
 import io
 import random
-
+import chess.pgn
 from flask import redirect, render_template, session
 from functools import wraps
 
@@ -64,23 +64,6 @@ def analyze_position(fen_position, depth=20):
     # Redirect stdout to an in-memory buffer
 
     with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
-        engine.configure({"Debug Log File": ""})
-        board = chess.Board(fen_position)
-
-        # Perform the analysis
-        analysis = engine.analyse(board, chess.engine.Limit(depth=20))
-        # Get the analysis results
-        eval = analysis["score"].relative.score() / 100
-        best_move = analysis["pv"][0]
-        best_move_san = board.san(chess.Move.from_uci(str(best_move)))
-        info = {}
-        info["best_move"] = best_move_san
-        info["evaluation"] = eval
-        print(info)
-        return info
-
-    with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
-        engine.configure({"Debug Log File": ""})
         board = chess.Board(fen_position)
 
         # Perform the analysis
@@ -108,6 +91,7 @@ def random_fen_from_pgn(pgnfile):
             if board.fullmove_number == desired_move_number:
                 break
         fen = board.fen()
+        return fen
         
 
     
