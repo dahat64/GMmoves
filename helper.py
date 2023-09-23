@@ -10,6 +10,7 @@ import chess.engine
 import os
 import sys
 import io
+import random
 
 from flask import redirect, render_template, session
 from functools import wraps
@@ -78,6 +79,36 @@ def analyze_position(fen_position, depth=20):
         print(info)
         return info
 
+    with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
+        engine.configure({"Debug Log File": ""})
+        board = chess.Board(fen_position)
+
+        # Perform the analysis
+        analysis = engine.analyse(board, chess.engine.Limit(depth=20))
+        # Get the analysis results
+        eval = analysis["score"].relative.score() / 100
+        best_move = analysis["pv"][0]
+        best_move_san = board.san(chess.Move.from_uci(str(best_move)))
+        info = {}
+        info["best_move"] = best_move_san
+        info["evaluation"] = eval
+        print(info)
+        return info
+
+def random_fen_from_pgn(pgnfile):
+    with open(pgnfile) as pgn_file:
+        pgn_game = chess.pgn.read_game(pgn_file)
+        board = pgn_game.board()
+        move_count = 0
+        for _ in pgn_game.mainline_moves():
+            move_count += 0.5
+        desired_move_number = random.randint(4, move_count)  # Replace with the move number you want
+        for move in pgn_game.mainline_moves():
+            board.push(move)
+            if board.fullmove_number == desired_move_number:
+                break
+        fen = board.fen()
+        
 
     
 
