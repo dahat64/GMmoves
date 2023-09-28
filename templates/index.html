@@ -13,11 +13,29 @@
 {% endblock %}
 
 {% block main %}
-
-    <h1>Nice</h1>
-    <h3>{{info}}</h3>
-    <div style=" display: flex; justify-content: center; align-items: center;">
-        <div id="board" style="width: 400px;"></div>
+    
+    
+    <div style=" display: flex; justify-content: space-evenly; align-items: center;">
+        <h2>[Event "Titled Tue 9th May Early"]<br>
+        [Site "chess.com INT"]<br>
+        [Round "9"]<br>
+        [Date "2023.5.9"]<br>
+        [White "Nakamura, Hikaru"]<br>
+        [Black "Carlsen, Magnus"]<br>
+        [WhiteElo "2750"]<br>
+        [BlackElo "2864"]<br>
+        [Result "0-1"]</h4>
+        <div id="board" style="width: 520px; margin-left: 20px;"></div>
+        <div>
+            <form action="/answer" method="post">
+                <label style="display: block; font-weight: bold; font-size: 40px;;" for="move">Your move:</label>
+                <input type="text" name="move" style="width: 100%;padding: 10px;border: 1px solid #000000; border-radius:3px; margin-left: 20px; font-size: 30px">
+                <br>
+                <br>
+                <input type="button" value="Check Move" style=" display: inline-block; background-color: #F8F9FA; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer;">
+                
+            </form>
+        </div>
     </div>
     <div id="hidden-info" style="display: none;">{{fen}}</div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

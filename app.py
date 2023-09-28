@@ -39,9 +39,11 @@ def after_request(response):
 @login_required
 def index():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
-    fen = random_fen_from_pgn('ct-2750-2864-2023.5.9.pgn')
-    info = analyze_position(fen, 20)
-    return render_template("index.html", accountname = person[0]['username'], info = info, fen = fen)
+    data = random_fen_from_pgn('ct-2750-2864-2023.5.9.pgn')
+    fen = data[0]
+    best_move = analyze_position(fen, 20, 3)
+    gmmove = data[1]
+    return render_template("index.html", accountname = person[0]['username'], fen = fen)
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")

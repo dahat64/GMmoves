@@ -14,6 +14,7 @@ import random
 import chess.pgn
 from flask import redirect, render_template, session
 from functools import wraps
+from pgn_parser import pgn, parser
 
 def login_required(f):
     """
@@ -49,7 +50,7 @@ def duplicateUsernameCheck(username, rows):
     return False
 
 
-def analyze_position(fen_position, depth=20):
+def analyze_position(fen_position, depth, lines):
     """
     Analyze a chess position using the Stockfish engine.
 
@@ -65,18 +66,37 @@ def analyze_position(fen_position, depth=20):
 
     with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
         board = chess.Board(fen_position)
-
         # Perform the analysis
-        analysis = engine.analyse(board, chess.engine.Limit(depth=20))
+        analysis = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=lines)
         # Get the analysis results
-        eval = analysis["score"].relative.score() / 100
-        best_move = analysis["pv"][0]
+
+        best_move = analysis[0]["pv"][0]
+        
         best_move_san = board.san(chess.Move.from_uci(str(best_move)))
         info = {}
         info["best_move"] = best_move_san
-        info["evaluation"] = eval
-        print(info)
+        info["evaluation"] = float(analysis[0]["score"].relative.score()) / 100
+        if board.turn == chess.BLACK:
+            info["evaluation"] = (float(analysis[0]["score"].relative.score()) / 100) * -1
+        try:
+            info["second_best"] = analysis[1]["pv"][0]
+            info["second_best"] = board.san(chess.Move.from_uci(str(info["second_best"])))
+            info["second_eval"] = float(analysis[1]["score"].relative.score()) / 100
+            if board.turn == chess.BLACK:
+                info["second_eval"] = (float(analysis[1]["score"].relative.score()) / 100) * -1
+            try:
+                info["third_best"] = analysis[2]["pv"][0]
+                info["third_best"] = board.san(chess.Move.from_uci(str(info["third_best"])))
+                info["third_eval"] = float(analysis[2]["score"].relative.score()) / 100
+                if board.turn == chess.BLACK:
+                    info["third_eval"] = (float(analysis[2]["score"].relative.score()) / 100) * -1
+            except IndexError:
+                pass
+        except IndexError:
+            pass
+        print(fen_position, info)
         return info
+
 
 def random_fen_from_pgn(pgnfile):
     with open(pgnfile) as pgn_file:
@@ -85,14 +105,52 @@ def random_fen_from_pgn(pgnfile):
         move_count = 0
         for _ in pgn_game.mainline_moves():
             move_count += 0.5
-        desired_move_number = random.randint(4, move_count)  # Replace with the move number you want
+        desired_move_number = random.randint(5, move_count) 
+        desired_move_number -= 0.5
+        if random.randint(1,2) == 1:
+             desired_move_number -= 0.5
+        desired_move_number *= 2
         for move in pgn_game.mainline_moves():
-            board.push(move)
-            if board.fullmove_number == desired_move_number:
+            if board.ply() == desired_move_number:
+                fen = board.fen()
+                grandmove = move
+                grandmove = board.san(chess.Move.from_uci(str(grandmove))) 
+                board.push(move)
+                gmfen = board.fen()
                 break
-        fen = board.fen()
-        return fen
-        
+            board.push(move)
+        gmmove_eval = analyze_position(gmfen, 20, 1)
+        gmmove = {}
+        gmmove["grandmaster_move"] = grandmove
+        gmmove["evaluation"] = gmmove_eval['evaluation']
+        return fen, gmmove
+
+
+def extract_player_info(pgn_file):
+    # Create a PGN database to read games from the file
+    with open(pgn_file) as pgn:
+        pgn_game = chess.pgn.read_game(pgn)
+
+        while pgn_game:
+            # Access the game headers to extract player information
+            headers = pgn_game.headers
+
+            # Extract player names and Elo ratings (if available)
+            white_player = headers.get("White", "Unknown White Player")
+            black_player = headers.get("Black", "Unknown Black Player")
+            white_elo = headers.get("WhiteElo", "Unknown")
+            black_elo = headers.get("BlackElo", "Unknown")
+            date = headers.get("Date", "Unknown Date")
+            result = headers.get("Result", "Unknown Result")
+            event = headers.get("Event", "Unknown Event")
+            white = {}
+            white['name'] = white_player
+            white['elo'] = white_elo
+            black = {}
+            black['name'] = black_player
+            black['elo'] = black_elo
+            
+            return event, date, white, black, result
 
     
 
