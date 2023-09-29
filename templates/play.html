@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+    Play
+    
+{% endblock %}
+
+{% block accountname %}{{accountname}}{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+    
+    
+    <div style=" display: flex; justify-content: space-evenly; align-items: center;">
+
+        <table class="table table-bordered" style="width: 400px; font-size: 26px;">
+            <tbody>
+                <tr>
+                    <th scope="col">Date</th>
+                    <td>{{date}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">Event</th>
+                    <td>{{event}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">White</th>
+                    <td>{{white}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">Black</th>
+                    <td>{{black}}</td>
+            </tbody>
+        </table>
+        <div style="margin: 0px; padding: 0px;">
+        <h1 style="position: absolute; right: 540px; top: 100px; font-size: 40px;">{{color}} to move!</h1>
+            <div id="board" style="width: 520px; margin-left: 20px;  margin-top: 25px;"></div>
+        </div>
+        <div style="margin-bottom: 50px; margin-right: 60px;">
+            <form action="/" method="post">
+                <label style="display: block; font-size: 40px; margin-bottom: 15px;" for="move">Your move:</label>
+                <input type="text" name="move" style="width: 100px;padding: 10px;border: 1px solid #000000; border-radius:3px; margin-left: 20px; font-size: 30px">
+                <br>
+                <br>
+                <input type="submit" value="Check Move" style=" display: inline-block; background-color: #c5c5ca; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; font-size: 26px; margin-top: 10px;">
+                <input type="hidden" name="fen" value="{{fen}}">
+                
+            </form>
+        </div>
+    </div>
+    <div id="hidden-info" style="display: none;">{{fen}}</div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
+    <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

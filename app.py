@@ -2,9 +2,10 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci
 from flask_limiter import Limiter
-import subprocess
+from datetime import datetime
+import threading
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -35,15 +36,39 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route("/")
+
+@app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
-    data = random_fen_from_pgn('ct-2750-2864-2023.5.9.pgn')
-    fen = data[0]
-    best_move = analyze_position(fen, 20, 3)
-    gmmove = data[1]
-    return render_template("index.html", accountname = person[0]['username'], fen = fen)
+    if request.method == "GET":
+        return render_template("index.html")
+
+
+@app.route("/play", methods=["GET", "POST"])
+@login_required
+def play():
+    if request.method == "GET":
+        person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+        pgn = 'ct-2750-2864-2023.5.9.pgn'
+        data = random_fen_from_pgn(pgn)
+        fen = data[0]
+        best_move = analyze_position(fen, 20, 3)
+        gmmove = data[1]
+        color = data[2]
+        gameinfo = game_info(pgn)
+        date = gameinfo['date']
+        white = gameinfo['white']
+        black = gameinfo['black']
+        result = gameinfo['result']
+        event = gameinfo['event']
+        date = datetime.strptime(date, "%Y.%m.%d")
+        date = date.strftime("%Y %B %-d" + "th")
+        return render_template("play.html", color = color,date = date,event = event, white = white, black = black, result = result, accountname = person[0]['username'], fen = fen)
+    fen = request.form.get("fen")
+    move = request.form.get("move")
+    move = user_input_to_uci(move, fen)
+    print(f"move is {move} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaskldjf")
+    return str(move)
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")

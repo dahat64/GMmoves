@@ -3,43 +3,61 @@
 {% block title %}
 
     Home
-    
+
 {% endblock %}
 
 {% block accountname %}{{accountname}}{% endblock %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block main %}
-    
-    
-    <div style=" display: flex; justify-content: space-evenly; align-items: center;">
-        <h2>[Event "Titled Tue 9th May Early"]<br>
-        [Site "chess.com INT"]<br>
-        [Round "9"]<br>
-        [Date "2023.5.9"]<br>
-        [White "Nakamura, Hikaru"]<br>
-        [Black "Carlsen, Magnus"]<br>
-        [WhiteElo "2750"]<br>
-        [BlackElo "2864"]<br>
-        [Result "0-1"]</h4>
-        <div id="board" style="width: 520px; margin-left: 20px;"></div>
+
+    <div id="content" style="display: flex; justify-content: space-evenly; align-items: center;">
         <div>
-            <form action="/answer" method="post">
-                <label style="display: block; font-weight: bold; font-size: 40px;;" for="move">Your move:</label>
-                <input type="text" name="move" style="width: 100%;padding: 10px;border: 1px solid #000000; border-radius:3px; margin-left: 20px; font-size: 30px">
-                <br>
-                <br>
-                <input type="button" value="Check Move" style=" display: inline-block; background-color: #F8F9FA; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer;">
-                
+                    <table class="table table-bordered" style="width: 400px; font-size: 26px;">
+                        <tbody>
+                            <tr>
+                                <th scope="col">1.</th>
+                                <td id="hikaru">Nakamura, Hikaru</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">2.</th>
+                                <td id="magnus">Carlsen, Magnus</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">3.</th>
+                                <td id="fabi">Caruana, Fabiano</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">4.</th>
+                                <td id="nepo">Nepomniachtchi, Ian</td>
+                        </tbody>
+                    </table>
+        </div>
+        <div>
+            <form>
+                <input type="text">
             </form>
         </div>
     </div>
-    <div id="hidden-info" style="display: none;">{{fen}}</div>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
-    <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        var hikaru = document.getElementById("hikaru");
+        var magnus = document.getElementById("magnus");
+        var fabi = document.getElementById("fabi");
+        var nepo = document.getElementById("nepo");
+        var content = document.getElementById("content");
+
+        hikaru.addEventListener('click', function () {
+            content.innerHTML = '<div style="position: fixed; right: 1336px; top 50px;"><h1>Go back</h1><img src="static/go-back.png" style="width: 50px; height: auto;"></div><h1>hikaru games</h1>';
+        }); 
+        magnus.addEventListener('click', function () {
+            content.innerHTML = '<h1>magnus games</h1>';
+        }); 
+        fabi.addEventListener('click', function () {
+            // Replace all content in contentContainer with new HTML
+            content.innerHTML = '<h1>fabi games</h1>';
+        });
+    </script>
 {% endblock %}

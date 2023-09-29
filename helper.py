@@ -50,7 +50,7 @@ def duplicateUsernameCheck(username, rows):
     return False
 
 
-def analyze_position(fen_position, depth, lines):
+def analyze_position(fen_position, depth = 20, lines = 3):
     """
     Analyze a chess position using the Stockfish engine.
 
@@ -94,7 +94,6 @@ def analyze_position(fen_position, depth, lines):
                 pass
         except IndexError:
             pass
-        print(fen_position, info)
         return info
 
 
@@ -113,6 +112,9 @@ def random_fen_from_pgn(pgnfile):
         for move in pgn_game.mainline_moves():
             if board.ply() == desired_move_number:
                 fen = board.fen()
+                color = "White"
+                if fen.split(' ')[1] == 'b':
+                    color = "Black"
                 grandmove = move
                 grandmove = board.san(chess.Move.from_uci(str(grandmove))) 
                 board.push(move)
@@ -123,10 +125,47 @@ def random_fen_from_pgn(pgnfile):
         gmmove = {}
         gmmove["grandmaster_move"] = grandmove
         gmmove["evaluation"] = gmmove_eval['evaluation']
-        return fen, gmmove
+        return fen, gmmove, color
+
+import chess
+
+def user_input_to_uci(move_input, fen):
+    board = chess.Board(fen)
+
+    # Try to convert the user-friendly input to UCI for standard moves
+    try:
+        move = board.parse_san(move_input)
+        return move.uci()
+    except ValueError:
+        # Try again with the input converted to title case
+        move_input = str(move_input).capitalize()
+        try:
+            move = board.parse_san(move_input)
+            return move.uci()
+        except ValueError:
+            pass
+
+    # Handle promotion moves (e.g., "e8=Q", "e8+")
+    if "=" in move_input or "+" in move_input:
+        # Check if the move ends with a promotion piece (Q, R, B, N)
+        if move_input[-1] in ['Q', 'R', 'B', 'N']:
+            # Extract the destination square
+            dest_square = move_input[-3:-1]
+
+            # Find the piece to move based on its destination square
+            for move in board.legal_moves:
+                if move.to_square == chess.parse_square(dest_square):
+                    promotion = move_input[-1].upper()
+                    from_square = move.from_square
+                    move = chess.Move(from_square, chess.parse_square(dest_square), promotion=chess.Piece.from_symbol(promotion))
+                    return move.uci()
+
+    # Handle invalid input
+    return None
 
 
-def extract_player_info(pgn_file):
+
+def game_info(pgn_file):
     # Create a PGN database to read games from the file
     with open(pgn_file) as pgn:
         pgn_game = chess.pgn.read_game(pgn)
@@ -140,17 +179,16 @@ def extract_player_info(pgn_file):
             black_player = headers.get("Black", "Unknown Black Player")
             white_elo = headers.get("WhiteElo", "Unknown")
             black_elo = headers.get("BlackElo", "Unknown")
-            date = headers.get("Date", "Unknown Date")
-            result = headers.get("Result", "Unknown Result")
-            event = headers.get("Event", "Unknown Event")
-            white = {}
-            white['name'] = white_player
-            white['elo'] = white_elo
-            black = {}
-            black['name'] = black_player
-            black['elo'] = black_elo
+            gameinfo = {}
+            gameinfo['date'] = headers.get("Date", "Unknown Date")
+            gameinfo['result'] = headers.get("Result", "Unknown Result")
+            gameinfo['event'] = headers.get("Event", "Unknown Event")
+            gameinfo['white'] = f"White: {white_player}: {white_elo} Elo"
+            gameinfo['black'] = f"Black: {black_player}: {black_elo} Elo" 
             
-            return event, date, white, black, result
+            
+            return gameinfo
+        
 
     
 
