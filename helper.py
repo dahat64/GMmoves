@@ -1,20 +1,12 @@
-import csv
-import datetime
-import pytz
-import requests
-import subprocess
-import urllib
-import uuid
+
 import chess
 import chess.engine
-import os
-import sys
-import io
 import random
 import chess.pgn
 from flask import redirect, render_template, session
 from functools import wraps
-from pgn_parser import pgn, parser
+import os
+from cs50 import SQL
 
 def login_required(f):
     """
@@ -104,6 +96,8 @@ def random_fen_from_pgn(pgnfile):
         move_count = 0
         for _ in pgn_game.mainline_moves():
             move_count += 0.5
+        if move_count % 2 != 0:
+            move_count -= 0.5
         desired_move_number = random.randint(5, move_count) 
         desired_move_number -= 0.5
         if random.randint(1,2) == 1:
@@ -190,8 +184,49 @@ def game_info(pgn_file):
             return gameinfo
         
 
-    
 
+def read_pgn_files_in_folder(folder_path):
+    try:
+        # List all files in the folder
+        file_list = os.listdir(folder_path)
+
+        # Filter only the PGN files
+        pgn_files = [file for file in file_list if file.lower().endswith('.pgn')]
+
+        if not pgn_files:
+            print("No PGN files found in the folder.")
+            return
+
+        for pgn_file in pgn_files:
+            file_path = os.path.join(folder_path, pgn_file)
+            filename = pgn_file
+            # Open and read the PGN file
+            try:
+                with open(file_path, 'r') as pgn_file:
+                    pgn_content = pgn_file.read()
+                    info = game_info(file_path)
+                    white = info['white']
+                    black = info['black']
+
+                    try:
+                        alreadyexists = pgn.execute("SELECT filename FROM games WHERE content = ?", pgn_content)
+                        test = alreadyexists[0]
+                    except IndexError:
+                        pgn.execute("INSERT INTO games(filename, content, white, black) VALUES (?,?,?,?)", filename, pgn_content, white, black)
+
+            except Exception as e:
+                print(f"Error reading {pgn_file}: {e}")
+
+    except FileNotFoundError:
+        print(f"The folder '{folder_path}' does not exist.")
+    
+def pgn_parse(file_path):
+    with open(file_path) as pgnfile:
+        while True:
+            game = chess.pgn.read_game(pgnfile)
+            if game is None:
+                break
+            print(game)
 
 
 

@@ -1,17 +1,27 @@
-import threading
-from helper import analyze_position,random_fen_from_pgn
+import chess.pgn
+import os
 
-pgn = 'ct-2750-2864-2023.5.9.pgn'
-fen = random_fen_from_pgn(pgn)
-fen = fen[0]
-def thread_func():
-    data = analyze_position(fen, 20, 3)
-    print(data)
 
-thread = threading.Thread(target=thread_func)
-thread.start()
+global i
+i = 0
+def pgn_parse(file_path):
+    with open(file_path) as pgnfile:
+        while True:
+            game = chess.pgn.read_game(pgnfile)
+            if game is None:
+                break
+            global i
+            i = i + 1
+            print(i)
+            
 
-print("waiting")
+filenum = 0
+for file in os.listdir("PGN/Carlsen, Magnus"):
+    if file.endswith(".pgn"):
+        file_path = os.path.join("PGN/Carlsen, Magnus", file)
+        filenum += 1
+        print(f"filenum: {filenum}")
+        pgn_parse(file_path)
 
-before_data = analyze_position(fen, 15, 1)
-print(f"before data {before_data}")
+
+

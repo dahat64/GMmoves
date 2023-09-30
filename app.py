@@ -22,6 +22,7 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 Session(app)
 
 db = SQL("sqlite:///users.db")
+pgn = SQL("sqlite:///pgn.db")
 
 @limiter.request_filter
 def custom_message():
@@ -40,8 +41,9 @@ def after_request(response):
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("index.html", accountname = person[0]['username'])
 
 
 @app.route("/play", methods=["GET", "POST"])
