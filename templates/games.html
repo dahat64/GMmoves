@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+    Games
+
+{% endblock %}
+
+{% block accountname %}{{accountname}}{% endblock %}
+
+
+{% block main %}
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;">
+        <h1> Games</h1>
+        <br>
+        <table class="table table-bordered" style="width: 800px; font-size: 26px;">
+            <tr>
+                <th>White &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Black</th>
+   
+            </tr>
+        {% for row in rows %}
+            <tr>
+                <td><a href="/play?white={{row['white']}}&black={{rows['black']}}">{{row['white']}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{row['black']}}</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+{% endblock %}

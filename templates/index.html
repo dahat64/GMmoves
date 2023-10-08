@@ -8,102 +8,21 @@
 
 {% block accountname %}{{accountname}}{% endblock %}
 
-{% block head %}
-    <style>
-        .tableButtons {
-            text-decoration: underline;
-        }
-        .tableButtons:hover {
-            cursor: pointer;
-        }
-        .gobackText {
-            text-decoration: underline;
-        }
-
-        .goback:hover {
-            cursor: pointer;
-        }
-    </style>
-{% endblock %}
 
 {% block main %}
 
-
-    <div id="content" style="display: flex; justify-content: space-evenly; align-items: center;">
-        <div>
-            <p style="font-size: 33px; margin-top: 20px;"> Choose a grandmaster</p>
-            <table class="table table-bordered" style="width: 400px; font-size: 26px;">
-                <tbody>
-                    <tr class="tableButtons">
-                        <th scope="col">0.</th>
-                        <td id="random">Pick Random GM</td>
+    <p style="font-size: 33px;"> Choose a grandmaster</p>
+    <div style="display: flex; justify-content: space-evenly; align-items: center;">
+        <table class="table table-bordered" style="width: 400px; font-size: 26px;">
+            <tbody>
+                {% for name in namesdict %}
+                    <tr>
+                        <th scope="col">{{loop.index}}</th>
+                        <td><a href="/games?player={{namesdict[name]}}">{{name}}</a></td>
                     </tr>
-                    <tr class="tableButtons">
-                        <th scope="col">1.</th>
-                        <td id="magnus">Carlsen, Magnus</td>
-                    </tr>
-                    <tr class="tableButtons">
-                        <th scope="col">2.</th>
-                        <td id="hikaru">Nakamura, Hikaru</td>
-                    </tr>
-                    <tr class="tableButtons">
-                        <th scope="col">3.</th>
-                        <td id="fabi">Caruana, Fabiano</td>
-                    </tr>
-                    <tr class="tableButtons">
-                        <th scope="col">4.</th>
-                        <td id="nepo">Nepomniachtchi, Ian</td>
-                </tbody>
-            </table>
-        </div>
-
-        <div>
-            <form>
-                <label for="import" style="font-size: 33px;">Import a game (PGN)</label>
-                <br>
-                <span class="hint-text" style="font-size: 14px;" for="username">You will be shown a random position from the game and will have to find the best move</span>
-                <br>
-                <br>
-                <textarea name="import" placeholder="Paste PGN here"
-                    style="display: inline-block; width: 400px; height: 235px; margin-left: 70px;"></textarea>
-                <input type="button" value="Import" style="display: inline-block; vertical-align: top; margin-left: 20px; margin-top: 100px; font-size: 23px;">
-            </form>
-
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <script>
-        var hikaru = document.getElementById("hikaru");
-        var magnus = document.getElementById("magnus");
-        var fabi = document.getElementById("fabi");
-        var nepo = document.getElementById("nepo");
-        var content = document.getElementById("content");
 
-        hikaru.addEventListener('click', function () {
-            content.innerHTML = '<div id="goback" class="goback" style="position: fixed; right: 1336px; top 50px;"><h1 class="gobackText">Go back</h1><img src="static/go-back.png" style="width: 50px; height: auto;"></div><h1>hikaru games</h1>';
-            var script = document.createElement('script');
-            script.innerHTML = 'var goback = document.getElementById("goback"); goback.addEventListener("click", function(){window.location.href = "/";});';
-            content.appendChild(script);
-        });
-
-        magnus.addEventListener("click", function () {
-            content.innerHTML = '<div id="goback" class="goback" style="position: fixed; right: 1336px; top 50px;"><h1 class="gobackText">Go back</h1><img src="static/go-back.png" style="width: 50px; height: auto;"></div><h1>Magnus games</h1>';
-            var script = document.createElement('script');
-            script.innerHTML = 'var goback = document.getElementById("goback"); goback.addEventListener("click", function(){window.location.href = "/";});';
-            content.appendChild(script);
-        }); 
-
-        fabi.addEventListener("click", function () {
-            content.innerHTML = '<div id="goback" class="goback" style="position: fixed; right: 1336px; top 50px;"><h1 class="gobackText">Go back</h1><img src="static/go-back.png" style="width: 50px; height: auto;"></div><h1>Fabi games</h1>';
-            var script = document.createElement('script');
-            script.innerHTML = 'var goback = document.getElementById("goback"); goback.addEventListener("click", function(){window.location.href = "/";});';
-            content.appendChild(script);
-        });
-
-        nepo.addEventListener("click", function () {
-            content.innerHTML = '<div id="goback" class="goback" style="position: fixed; right: 1336px; top 50px;"><h1 class="gobackText">Go back</h1><img src="static/go-back.png" style="width: 50px; height: auto;"></div><h1>Nepo games</h1>';
-            var script = document.createElement('script');
-            script.innerHTML = 'var goback = document.getElementById("goback"); goback.addEventListener("click", function(){window.location.href = "/";});';
-            content.appendChild(script);
-        });
-    </script>
 {% endblock %}

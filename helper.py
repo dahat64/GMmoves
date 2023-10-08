@@ -161,14 +161,29 @@ def user_input_to_uci(move_input, fen):
 
 def game_info(pgn_file):
     # Create a PGN database to read games from the file
-    with open(pgn_file) as pgn:
-        pgn_game = chess.pgn.read_game(pgn)
+    try:
+        with open(pgn_file) as pgn:
+            pgn_game = chess.pgn.read_game(pgn)
 
-        while pgn_game:
-            # Access the game headers to extract player information
-            headers = pgn_game.headers
+            while pgn_game:
+                # Access the game headers to extract player information
 
-            # Extract player names and Elo ratings (if available)
+                # Extract player names and Elo ratings (if available)
+                white_player = headers.get("White", "Unknown White Player")
+                black_player = headers.get("Black", "Unknown Black Player")
+                white_elo = headers.get("WhiteElo", "Unknown")
+                black_elo = headers.get("BlackElo", "Unknown")
+                gameinfo = {}
+                gameinfo['date'] = headers.get("Date", "Unknown Date")
+                gameinfo['result'] = headers.get("Result", "Unknown Result")
+                gameinfo['event'] = headers.get("Event", "Unknown Event")
+                gameinfo['white'] = white_player
+                gameinfo['black'] = black_player
+                gameinfo['whiteElo'] = white_elo
+                gameinfo['blackElo'] = black_elo
+                return gameinfo
+    except TypeError:
+            headers = pgn_file.headers
             white_player = headers.get("White", "Unknown White Player")
             black_player = headers.get("Black", "Unknown Black Player")
             white_elo = headers.get("WhiteElo", "Unknown")
@@ -177,10 +192,10 @@ def game_info(pgn_file):
             gameinfo['date'] = headers.get("Date", "Unknown Date")
             gameinfo['result'] = headers.get("Result", "Unknown Result")
             gameinfo['event'] = headers.get("Event", "Unknown Event")
-            gameinfo['white'] = f"White: {white_player}: {white_elo} Elo"
-            gameinfo['black'] = f"Black: {black_player}: {black_elo} Elo" 
-            
-            
+            gameinfo['white'] = white_player
+            gameinfo['black'] = black_player
+            gameinfo['whiteElo'] = white_elo
+            gameinfo['blackElo'] = black_elo
             return gameinfo
         
 
@@ -228,5 +243,22 @@ def pgn_parse(file_path):
                 break
             print(game)
 
+
+def listoflines(filename, mode):
+    if mode == "letteronly":
+        with open(filename, "r") as file:
+            list = []
+            for line in file:
+                line = line.replace("\n", "").replace(" ", "").replace("\t", "").replace(",", "").replace("-", "")
+                list.append(line)
+            return list
+    else:
+        with open(filename, "r") as file:
+            list = []
+            for line in file:
+                line = line[:-1]
+                list.append(line)
+            return list
+    
 
 

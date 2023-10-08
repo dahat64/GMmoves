@@ -2,10 +2,11 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines
 from flask_limiter import Limiter
 from datetime import datetime
 import threading
+import re
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -42,9 +43,38 @@ def after_request(response):
 @login_required
 def index():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+    names = listoflines("GmNames.txt", "")
+    #namesnospaces is for the query parameter so that there's no space which would make the link invalid
+    namesnospaces = listoflines("GmNames.txt", "letteronly")
+    namesdict =  {}
+    i = 0
+    for name in names:
+        namesdict[name] = namesnospaces[i]
+        i += 1
     if request.method == "GET":
-        return render_template("index.html", accountname = person[0]['username'])
+        return render_template("index.html", accountname = person[0]['username'], namesdict = namesdict)
 
+@app.route("/games")
+@login_required
+def games():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+    player = request.args.get("player")
+
+    secondname = ""
+    upper = 0
+    for char in player:
+        if char.isupper() == True:
+            upper += 1
+            if upper == 2:
+                break
+            secondname += char
+        else:
+            secondname += char
+
+    player = f"%{secondname}%"
+    rows = pgn.execute("SELECT white, black FROM games WHERE white LIKE ? OR black LIKE ?", player, player)
+    print(len(rows))
+    return render_template("games.html", accountname = person[0]['username'], rows = rows)
 
 @app.route("/play", methods=["GET", "POST"])
 @login_required
@@ -197,6 +227,12 @@ def about():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     return render_template("about.html", accountname = person[0]['username'])
 
+@app.route("/import", methods=["GET", "POST"])
+@login_required
+def importPGN():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
+    if request.method == "GET":
+        return render_template("import.html", accountname = person[0]['username'] )
 
 if __name__ == '__main__':
     app.run()
