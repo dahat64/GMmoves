@@ -10,3 +10,4 @@ $(document).ready(function () {
         orientation: orientation // Set the board orientation
     });
 });
+

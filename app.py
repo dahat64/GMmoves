@@ -2,11 +2,11 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword
 from flask_limiter import Limiter
 from datetime import datetime
-import threading
-import re
+import ast
+import chess
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -23,7 +23,7 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 Session(app)
 
 db = SQL("sqlite:///users.db")
-pgn = SQL("sqlite:///pgn.db")
+gamesdb = SQL("sqlite:///pgn.db")
 
 @limiter.request_filter
 def custom_message():
@@ -59,48 +59,102 @@ def index():
 def games():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     player = request.args.get("player")
-
-    secondname = ""
-    upper = 0
-    for char in player:
-        if char.isupper() == True:
-            upper += 1
-            if upper == 2:
-                break
-            secondname += char
-        else:
-            secondname += char
-
-    player = f"%{secondname}%"
-    rows = pgn.execute("SELECT white, black FROM games WHERE white LIKE ? OR black LIKE ?", player, player)
+    player = getfirstword(player)
+    player = f"%{player}%"
+    rows = gamesdb.execute("SELECT DISTINCT white, black FROM games WHERE white LIKE ? OR black LIKE ?", player, player)
     print(len(rows))
     return render_template("games.html", accountname = person[0]['username'], rows = rows)
 
 @app.route("/play", methods=["GET", "POST"])
 @login_required
 def play():
+    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     if request.method == "GET":
-        person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
-        pgn = 'ct-2750-2864-2023.5.9.pgn'
-        data = random_fen_from_pgn(pgn)
+        white = getfirstword(request.args.get("white"))
+        black = getfirstword(request.args.get("black"))
+        white = f"%{white}%"
+        black = f"%{black}%"
+        rows = gamesdb.execute("SELECT * FROM games WHERE white LIKE ? AND black LIKE ?", white, black)
+        pgn = rows[0]['game']
+        print(pgn)
+        data = random_fen_from_pgn(pgn, type = "text")
         fen = data[0]
-        best_move = analyze_position(fen, 20, 3)
-        gmmove = data[1]
+        best_moves = analyze_position(fen, 20, 3)
+        gmmove = data[1]['grandmaster_move']
+        gmeval = data[1]['eval']
         color = data[2]
-        gameinfo = game_info(pgn)
+        gameinfo = game_info(pgn, type = "text")
         date = gameinfo['date']
         white = gameinfo['white']
         black = gameinfo['black']
         result = gameinfo['result']
         event = gameinfo['event']
+        date= date.replace('??', '01')
         date = datetime.strptime(date, "%Y.%m.%d")
-        date = date.strftime("%Y %B %-d" + "th")
-        return render_template("play.html", color = color,date = date,event = event, white = white, black = black, result = result, accountname = person[0]['username'], fen = fen)
+        date = date.strftime("%Y %B %-d")
+        return render_template("play.html", color = color,date = date,event = event, white = white, black = black, result = result, gmmove = gmmove, gmeval = gmeval, best_moves = best_moves, accountname = person[0]['username'], fen = fen)
     fen = request.form.get("fen")
+    white = request.form.get("white")
+    black = request.form.get("black")
     move = request.form.get("move")
-    move = user_input_to_uci(move, fen)
-    print(f"move is {move} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaskldjf")
-    return str(move)
+    gmmove = request.form.get("gmmove")
+    gmeval = request.form.get("gmeval")
+    best_moves = request.form.get("best_moves")
+    best_moves = ast.literal_eval(best_moves)
+    best_move = best_moves["best_move"]
+    best_eval = best_moves["eval"]
+    if len(best_moves) > 2:
+        second_best = best_moves["second_best"]
+        second_eval = best_moves["second_eval"]
+    if len(best_moves) > 4:
+        third_best = best_moves["third_best"]
+        third_eval = best_moves["third_eval"]
+    if gmmove == best_move:
+        gmeval = best_eval
+    if gmmove == second_best:
+        gmeval = second_eval
+    if gmmove == third_best:
+        gmeval = third_eval
+    evaldone = False
+    if move == best_move:
+        your_eval = best_eval
+        evaldone = True
+    if move == second_best:
+        your_eval = second_eval
+        evaldone = True
+    if move == third_best:
+        your_eval = third_eval
+        evaldone = True
+    if not evaldone == True:
+        moveuci = user_input_to_uci(move, fen)
+        board = chess.Board(fen)
+        movetoplay = chess.Move.from_uci(moveuci)
+        try:
+            board.push(movetoplay)
+        except AssertionError:
+            return 
+        fen_after_playermove = board.fen()
+        playermovedata = analyze_position(fen_after_playermove, 20, 1)
+        your_eval = playermovedata["eval"]
+    isBlacksTurn = fen.split(' ')[1] == 'b'
+    if isBlacksTurn == True:
+        gm = black
+    else:
+        gm = white
+    diff = float(best_eval) - float(your_eval)
+    if diff < 0.20 and diff > -0.20:
+        bgcolor = "#23A80D"
+    elif diff < 0.40 and diff > -0.40:
+        bgcolor = "#36EA19"
+    elif diff < 0.60 and diff > -0.60:
+        bgcolor = "#C6FF21" 
+    elif diff < 1.00 and diff > -1.00:
+        bgcolor = "#FCFF3E" 
+    elif diff < 2.00 and diff > -2.00:
+        bgcolor = "#FFAA00"  
+    else:
+        bgcolor = "#FF3200 "  
+    return render_template("answer.html", accountname = person[0]['username'], move = move, your_eval = your_eval, gmmove = gmmove, gmeval = gmeval, gm = gm, best_move = best_move, best_eval = best_eval, second_best = second_best, second_eval = second_eval, third_best = third_best, third_eval = third_eval, fen = fen, bgcolor= bgcolor )
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")

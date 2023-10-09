@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+    Answer
+
+{% endblock %}
+
+{% block accountname %}{{accountname}}{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+    <div style="display: flex; justify-content: flex-start; align-items: center;">
+        <div>
+            <h2 style="margin-bottom: 20px; margin-left: 100px;">In This Position:</h2>
+            <div id="board" style="width: 480px; margin-left: 100px;"></div>
+            <div id="hidden-info" style="display: none;">{{fen}}</div>
+            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
+            <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
+            <script src="{{ url_for('static', filename='script.js') }}"></script>
+        </div>
+        <div style="margin-left: 190px;">
+            <table class="table table-bordered" style="font-size: 25px; width: 600px; margin-bottom: 50px;">
+                <tr>
+                    <th>Player</th>
+                    <th>Move</th>
+                    <th>Evaluation</th>
+                </tr>
+                <tr  style="background-color: {{bgcolor}};">
+                    <td>You played:</td>
+                    <td style="width: 100px;">{{move}}</td>
+                    <td style="width: 100px;">{{your_eval}}</td>
+                </tr>
+            </table>
+            <table class="table table-bordered" style="font-size: 25px; width: 600px; margin-bottom: 50px;">
+                <tr>
+                    <th>Grandmaster</th>
+                    <th>Move</th>
+                    <th>Evaluation</th>
+                </tr>
+                <tr>
+                    <td>"{{gm}}" played:</td>
+                    <td style="width: 100px;">{{gmmove}}</td>
+                    <td style="width: 100px;">{{gmeval}}</td>
+                </tr>
+            </table>
+            <table class="table table-bordered" style="font-size: 25px; width: 600px; margin-bottom: 30px;">
+                <tr>
+                    <th>Engine</th>
+                    <th>Move</th>
+                    <th>Evaluation</th>
+                </tr>
+                <tr>
+                    <td>Best engine move:</td>
+                    <td style="width: 100px;">{{best_move}}</td>
+                    <td style="width: 100px;">{{best_eval}}</td>
+                </tr>
+                <tr>
+                    <td>2nd best engine move:</td>
+                    <td style="width: 100px;">{{second_best}}</td>
+                    <td style="width: 100px;">{{second_eval}}</td>
+                </tr>
+                <tr>
+                    <td>3rd best engine move:</td>
+                    <td>{{third_best}}</td>
+                    <td>{{third_eval}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -7,6 +7,7 @@ from flask import redirect, render_template, session
 from functools import wraps
 import os
 from cs50 import SQL
+import io
 
 def login_required(f):
     """
@@ -67,9 +68,9 @@ def analyze_position(fen_position, depth = 20, lines = 3):
         best_move_san = board.san(chess.Move.from_uci(str(best_move)))
         info = {}
         info["best_move"] = best_move_san
-        info["evaluation"] = float(analysis[0]["score"].relative.score()) / 100
+        info["eval"] = float(analysis[0]["score"].relative.score()) / 100
         if board.turn == chess.BLACK:
-            info["evaluation"] = (float(analysis[0]["score"].relative.score()) / 100) * -1
+            info["eval"] = (float(analysis[0]["score"].relative.score()) / 100) * -1
         try:
             info["second_best"] = analysis[1]["pv"][0]
             info["second_best"] = board.san(chess.Move.from_uci(str(info["second_best"])))
@@ -89,9 +90,41 @@ def analyze_position(fen_position, depth = 20, lines = 3):
         return info
 
 
-def random_fen_from_pgn(pgnfile):
-    with open(pgnfile) as pgn_file:
-        pgn_game = chess.pgn.read_game(pgn_file)
+
+def random_fen_from_pgn(pgn, type = "file"):
+    if type == "file":
+        with open(pgn) as pgn_file:
+            pgn_game = chess.pgn.read_game(pgn_file)
+            board = pgn_game.board()
+            move_count = 0
+            for _ in pgn_game.mainline_moves():
+                move_count += 0.5
+            if move_count % 2 != 0:
+                move_count -= 0.5
+            desired_move_number = random.randint(5, move_count) 
+            desired_move_number -= 0.5
+            if random.randint(1,2) == 1:
+                desired_move_number -= 0.5
+            desired_move_number *= 2
+            for move in pgn_game.mainline_moves():
+                if board.ply() == desired_move_number:
+                    fen = board.fen()
+                    color = "White"
+                    if fen.split(' ')[1] == 'b':
+                        color = "Black"
+                    grandmove = move
+                    grandmove = board.san(chess.Move.from_uci(str(grandmove))) 
+                    board.push(move)
+                    gmfen = board.fen()
+                    break
+                board.push(move)
+            gmmove_eval = analyze_position(gmfen, 20, 1)
+            gmmove = {}
+            gmmove["grandmaster_move"] = grandmove
+            gmmove["eval"] = gmmove_eval['eval']
+            return fen, gmmove, color
+    elif type == "text":
+        pgn_game = chess.pgn.read_game(io.StringIO(pgn))
         board = pgn_game.board()
         move_count = 0
         for _ in pgn_game.mainline_moves():
@@ -101,7 +134,7 @@ def random_fen_from_pgn(pgnfile):
         desired_move_number = random.randint(5, move_count) 
         desired_move_number -= 0.5
         if random.randint(1,2) == 1:
-             desired_move_number -= 0.5
+                desired_move_number -= 0.5
         desired_move_number *= 2
         for move in pgn_game.mainline_moves():
             if board.ply() == desired_move_number:
@@ -118,11 +151,9 @@ def random_fen_from_pgn(pgnfile):
         gmmove_eval = analyze_position(gmfen, 20, 1)
         gmmove = {}
         gmmove["grandmaster_move"] = grandmove
-        gmmove["evaluation"] = gmmove_eval['evaluation']
+        gmmove["eval"] = gmmove_eval['eval']
         return fen, gmmove, color
-
-import chess
-
+      
 def user_input_to_uci(move_input, fen):
     board = chess.Board(fen)
 
@@ -159,15 +190,14 @@ def user_input_to_uci(move_input, fen):
 
 
 
-def game_info(pgn_file):
+def game_info(pgn, type = "file"):
     # Create a PGN database to read games from the file
-    try:
-        with open(pgn_file) as pgn:
+    if type == "file":
+        with open(pgn) as pgn:
             pgn_game = chess.pgn.read_game(pgn)
-
             while pgn_game:
                 # Access the game headers to extract player information
-
+                headers = pgn_game.headers
                 # Extract player names and Elo ratings (if available)
                 white_player = headers.get("White", "Unknown White Player")
                 black_player = headers.get("Black", "Unknown Black Player")
@@ -182,21 +212,25 @@ def game_info(pgn_file):
                 gameinfo['whiteElo'] = white_elo
                 gameinfo['blackElo'] = black_elo
                 return gameinfo
-    except TypeError:
-            headers = pgn_file.headers
-            white_player = headers.get("White", "Unknown White Player")
-            black_player = headers.get("Black", "Unknown Black Player")
-            white_elo = headers.get("WhiteElo", "Unknown")
-            black_elo = headers.get("BlackElo", "Unknown")
-            gameinfo = {}
-            gameinfo['date'] = headers.get("Date", "Unknown Date")
-            gameinfo['result'] = headers.get("Result", "Unknown Result")
-            gameinfo['event'] = headers.get("Event", "Unknown Event")
-            gameinfo['white'] = white_player
-            gameinfo['black'] = black_player
-            gameinfo['whiteElo'] = white_elo
-            gameinfo['blackElo'] = black_elo
-            return gameinfo
+    elif type == "text":
+        pgn_game = chess.pgn.read_game(io.StringIO(pgn))
+        # Access the game headers to extract player information
+        headers = pgn_game.headers
+        # Extract player names and Elo ratings (if available)
+        white_player = headers.get("White", "Unknown White Player")
+        black_player = headers.get("Black", "Unknown Black Player")
+        white_elo = headers.get("WhiteElo", "Unknown")
+        black_elo = headers.get("BlackElo", "Unknown")
+        gameinfo = {}
+        gameinfo['date'] = headers.get("Date", "Unknown Date")
+        gameinfo['result'] = headers.get("Result", "Unknown Result")
+        gameinfo['event'] = headers.get("Event", "Unknown Event")
+        gameinfo['white'] = white_player
+        gameinfo['black'] = black_player
+        gameinfo['whiteElo'] = white_elo
+        gameinfo['blackElo'] = black_elo
+        return gameinfo
+
         
 
 
@@ -259,6 +293,20 @@ def listoflines(filename, mode):
                 line = line[:-1]
                 list.append(line)
             return list
-    
+        
+def getfirstword(str):  
+    upper = 0 
+    firstword = ""
+    for char in str:
+        if char.isupper() == True:
+            upper += 1
+            if upper == 2:
+                return firstword
+            firstword += char
+        else:
+            if char == "," or char == " ":
+                return firstword
+            firstword += char
+    return firstword
 
 
