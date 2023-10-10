@@ -131,6 +131,7 @@ def random_fen_from_pgn(pgn, type = "file"):
             move_count += 0.5
         if move_count % 2 != 0:
             move_count -= 0.5
+        move_count = int(move_count)
         desired_move_number = random.randint(5, move_count) 
         desired_move_number -= 0.5
         if random.randint(1,2) == 1:
@@ -188,6 +189,12 @@ def user_input_to_uci(move_input, fen):
     # Handle invalid input
     return None
 
+def uci_to_algebraic(moveuci, fen):
+    board = chess.Board(fen)
+    move = chess.Move.from_uci(moveuci)
+    algebraic_move = board.san(move)
+    print(f"aklsdfjalsdfjalsdjfasl;dkfjas;ldfjkalsdkfjalsdfkjasl;dkfjasdkj{algebraic_move}")
+    return algebraic_move
 
 
 def game_info(pgn, type = "file"):

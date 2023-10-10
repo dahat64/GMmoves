@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, session, render_template, jsonify
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword, uci_to_algebraic
 from flask_limiter import Limiter
 from datetime import datetime
 import ast
@@ -97,6 +97,7 @@ def play():
     white = request.form.get("white")
     black = request.form.get("black")
     move = request.form.get("move")
+    move = uci_to_algebraic(move, fen)
     gmmove = request.form.get("gmmove")
     gmeval = request.form.get("gmeval")
     best_moves = request.form.get("best_moves")
