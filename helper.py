@@ -91,7 +91,7 @@ def analyze_position(fen_position, depth = 20, lines = 3):
 
 
 
-def random_fen_from_pgn(pgn, type = "file"):
+def random_fen_from_pgn(pgn, color, type = "file"):
     if type == "file":
         with open(pgn) as pgn_file:
             pgn_game = chess.pgn.read_game(pgn_file)
@@ -103,7 +103,9 @@ def random_fen_from_pgn(pgn, type = "file"):
                 move_count -= 0.5
             desired_move_number = random.randint(5, move_count) 
             desired_move_number -= 0.5
-            if random.randint(1,2) == 1:
+            if color == "black" and desired_move_number.is_integer():
+                desired_move_number -= 0.5
+            if color == "white" and not desired_move_number.is_integer():
                 desired_move_number -= 0.5
             desired_move_number *= 2
             for move in pgn_game.mainline_moves():
@@ -134,8 +136,10 @@ def random_fen_from_pgn(pgn, type = "file"):
         move_count = int(move_count)
         desired_move_number = random.randint(5, move_count) 
         desired_move_number -= 0.5
-        if random.randint(1,2) == 1:
-                desired_move_number -= 0.5
+        if color == "black" and desired_move_number.is_integer():
+            desired_move_number -= 0.5
+        if color == "white" and not desired_move_number.is_integer():
+            desired_move_number -= 0.5
         desired_move_number *= 2
         for move in pgn_game.mainline_moves():
             if board.ply() == desired_move_number:

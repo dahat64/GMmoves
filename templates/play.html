@@ -16,44 +16,88 @@
     
     
     <div style="display: flex; justify-content: space-evenly; align-items: center;">
+        <div style=" margin-left: 20px;">
 
-        <table class="table table-bordered" style="width: 400px; font-size: 26px;">
-            <tbody>
-                <tr>
-                    <th scope="col">Date</th>
-                    <td>{{date}}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Event</th>
-                    <td>{{event}}</td>
-                </tr>
-                <tr>
-                    <th scope="col">White</th>
-                    <td>{{white}}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Black</th>
-                    <td>{{black}}</td>
+            <table class="table table-bordered" style="width: 400px; font-size: 26px;">
+                <tbody>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <td>{{date}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">Event</th>
+                        <td>{{event}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">White</th>
+                        <td>{{white}}<br>({{whiteElo}} Elo)</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">Black</th>
+                        <td>{{black}}<br>({{blackElo}} Elo)</td>
+                    </tr>
             </tbody>
-        </table>
-        <div style="margin: 0px; padding: 0px;">
-        <h1 style="position: absolute; right: 555px; top: 100px; font-size: 40px;">{{color}} to move!</h1>
-            <div id="board" style="width: 520px; margin-left: 20px;  margin-top: 25px; margin-right: 200px;"></div>
+            </table>
         </div>
-        <div style="margin-bottom: 50px; margin-right: 30px;">
-            <form id="moveForm" hidden>
-                <input type="hidden" name="fen" value="{{fen}}">
-                <input type="hidden" name="gmmove" value="{{gmmove}}">
-                <input type="hidden" name="best_moves" value="{{best_moves}}">
-                <input type="hidden" name="white" value="{{white}}">
-                <input type="hidden" name="black" value="{{black}}">          
-                <input type="hidden" name="gmeval" value="{{gmeval}}">          
-            </form>
+        <div style="margin: 0px; padding: 0px;">
+            <h1 style="position: absolute; top: 100px; right: 640px; font-size: 40px;">{{color}} to move!</h1>
+            <div id="board" style="width: 520px; margin-left: 40px; margin-right: 0px; margin-top: 30px;"></div>
+        </div>
+
+        <div style="margin-left: 50px;">
+            <p id="fenToCopy">{{fen}}</p>
+            <button id="fenCopyButton" style="margin-bottom: 30px;">Copy Fen</button>
+            <div id="pgnToCopy" style="height: 100px; width: 400px; overflow: auto;  border: 1px solid #ccc; padding: 10px;white-space: pre-wrap; margin-bottom: 10px;">{{pgn}}</div>
+            <button id="pgnCopyButton">Copy PGN</button>
         </div>
     </div>
+
+    <form id="moveForm" hidden>
+        <input type="hidden" name="fen" value="{{fen}}">
+        <input type="hidden" name="gmmove" value="{{gmmove}}">
+        <input type="hidden" name="best_moves" value="{{best_moves}}">
+        <input type="hidden" name="white" value="{{white}}">
+        <input type="hidden" name="black" value="{{black}}">
+        <input type="hidden" name="gmeval" value="{{gmeval}}">
+    </form>
+
     <div id="hidden-info" style="display: none;">{{fen}}</div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.11.0/chess.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        document.getElementById("fenCopyButton").addEventListener("click", function () {
+                // Select the text to be copied
+                var text = document.getElementById("fenToCopy");
+
+                // Create a range and select the text
+                var range = document.createRange();
+                range.selectNode(text);
+
+                // Add the selected text to the clipboard
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand("copy");
+
+                // Deselect the text
+                window.getSelection().removeAllRanges();
+            });
+            document.getElementById("pgnCopyButton").addEventListener("click", function () {
+                    // Select the text to be copied
+                    var text = document.getElementById("pgnToCopy");
+
+                    // Create a range and select the text
+                    var range = document.createRange();
+                    range.selectNode(text);
+
+                    // Add the selected text to the clipboard
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand("copy");
+
+                    // Deselect the text
+                    window.getSelection().removeAllRanges();
+                });
+    </script>
 {% endblock %}

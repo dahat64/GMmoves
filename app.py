@@ -7,6 +7,7 @@ from flask_limiter import Limiter
 from datetime import datetime
 import ast
 import chess
+import random
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -57,42 +58,48 @@ def index():
 @app.route("/games")
 @login_required
 def games():
-    person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     player = request.args.get("player")
+    if player == "PickRandomGM":
+        list = listoflines("GmNames.txt", "letteronly")
+        player = list[random.randint(0, len(list) - 1)]
     player = getfirstword(player)
     player = f"%{player}%"
-    rows = gamesdb.execute("SELECT DISTINCT white, black FROM games WHERE white LIKE ? OR black LIKE ?", player, player)
-    print(len(rows))
-    return render_template("games.html", accountname = person[0]['username'], rows = rows)
+    rows = gamesdb.execute("SELECT *,CASE WHEN white LIKE ? THEN 'white' WHEN black LIKE ? THEN 'black' ELSE 'unknown' END AS matched_color FROM games WHERE white LIKE ? OR black LIKE ?", player, player, player, player)
+    rand = random.randint(0, len(rows) - 1)
+    id = rows[rand]['id']
+    color = rows[rand]['matched_color']
+    id = str(id)
+    link = f"/play?id={id}&color={color}"
+    return redirect(link)
+
 
 @app.route("/play", methods=["GET", "POST"])
 @login_required
 def play():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     if request.method == "GET":
-        white = getfirstword(request.args.get("white"))
-        black = getfirstword(request.args.get("black"))
-        white = f"%{white}%"
-        black = f"%{black}%"
-        rows = gamesdb.execute("SELECT * FROM games WHERE white LIKE ? AND black LIKE ?", white, black)
+        id = int(request.args.get("id"))
+        color = request.args.get("color")
+        rows = gamesdb.execute("SELECT * FROM games WHERE id = ?", id)
         pgn = rows[0]['game']
-        print(pgn)
-        data = random_fen_from_pgn(pgn, type = "text")
+        gameinfo = game_info(pgn, type = "text")
+        data = random_fen_from_pgn(pgn, color,type = "text")
         fen = data[0]
         best_moves = analyze_position(fen, 20, 3)
         gmmove = data[1]['grandmaster_move']
         gmeval = data[1]['eval']
         color = data[2]
-        gameinfo = game_info(pgn, type = "text")
         date = gameinfo['date']
         white = gameinfo['white']
         black = gameinfo['black']
         result = gameinfo['result']
         event = gameinfo['event']
+        whiteElo = gameinfo['whiteElo']
+        blackElo = gameinfo['blackElo']
         date= date.replace('??', '01')
         date = datetime.strptime(date, "%Y.%m.%d")
         date = date.strftime("%Y %B %-d")
-        return render_template("play.html", color = color,date = date,event = event, white = white, black = black, result = result, gmmove = gmmove, gmeval = gmeval, best_moves = best_moves, accountname = person[0]['username'], fen = fen)
+        return render_template("play.html", color = color,date = date,event = event, white = white, whiteElo = whiteElo, blackElo = blackElo, black = black, result = result, gmmove = gmmove, gmeval = gmeval, best_moves = best_moves, accountname = person[0]['username'], fen = fen, pgn = pgn)
     fen = request.form.get("fen")
     white = request.form.get("white")
     black = request.form.get("black")
@@ -288,6 +295,23 @@ def importPGN():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
     if request.method == "GET":
         return render_template("import.html", accountname = person[0]['username'] )
+    pgn = request.form.get("import")
+    color = request.form.get("color")
+    if color == None:
+        color = "white"
+
+    gameinfo = game_info(pgn, type = "text")
+    white = gameinfo['white']
+    black = gameinfo['black']
+    if white == "?" or black == "?":
+        return apology("Invalid pgn")
+    rows = gamesdb.execute("SELECT * FROM games WHERE game = ?", pgn)
+    if len(rows) == 0:
+        gamesdb.execute("INSERT INTO games(game,white,black) VALUES (?,?,?)", pgn, white, black)
+        rows = gamesdb.execute("SELECT * FROM games WHERE game = ?", pgn)
+    id = rows[0]["id"]
+    link = f"/play?id={id}&color={color}"
+    return redirect(link)
 
 if __name__ == '__main__':
     app.run()

@@ -9,21 +9,25 @@
 {% block accountname %}{{accountname}}{% endblock %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+    
 {% endblock %}
 
 {% block main %}
     <div style="display: flex; justify-content: flex-start; align-items: center;">
         <div>
-            <h2 style="margin-bottom: 20px; margin-left: 100px;">In This Position:</h2>
-            <div id="board" style="width: 480px; margin-left: 100px;"></div>
+            <h2 style="margin-bottom: 10px; margin-left: 30px;">In This Position:</h2>
+            <p id="fenToCopy">{{fen}}</p>
+            <button id="fenCopyButton" style="margin-left: 10px; margin-bottom: 10px;">Copy Fen</button>
+            <div id="board" style="width: 440px; margin-left: 30px;"></div>
             <div id="hidden-info" style="display: none;">{{fen}}</div>
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
             <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
             <script src="{{ url_for('static', filename='answerscript.js') }}"></script>
         </div>
-        <div style="margin-left: 190px;">
+        <div style="margin-left: 50px;">
             <table class="table table-bordered" style="font-size: 25px; width: 600px; margin-bottom: 50px;">
                 <tr>
                     <th>Player</th>
@@ -71,5 +75,31 @@
                 </tr>
             </table>
         </div>
+        <div style=" margin-left: 30px;">
+            <a href="/games?player={{gm}}" style="font-size: 25px; "> <img src="/static/go-forward.png" style="width: 50px; height: auto;"><br>Another game by<br> {{gm}}</a> <br>
+            <br>
+            <br>
+            <a href="/" style="font-size: 25px; "> <img src="/static/go-back.png" style="width: 50px; height: auto;"><br>Back to Grandmasters list</a>
+        </div>
     </div>
+    <script>
+        document.getElementById("fenCopyButton").addEventListener("click", function () {
+            // Select the text to be copied
+            var text = document.getElementById("fenToCopy");
+
+            // Create a range and select the text
+            var range = document.createRange();
+            range.selectNode(text);
+
+            // Add the selected text to the clipboard
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+
+            // Deselect the text
+            window.getSelection().removeAllRanges();
+        }); 
+    </script>
+
+
 {% endblock %}

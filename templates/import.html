@@ -14,7 +14,7 @@
 
 {% block main %}
 
-    <form>
+    <form action="/import" method="post">
         <label for="import" style="font-size: 33px;">Import a game (PGN)</label>
         <br>
         <span class="hint-text" style="font-size: 14px;" for="username">You will be shown a random position from the game
@@ -22,9 +22,17 @@
         <br>
         <br>
         <textarea name="import" placeholder="Paste PGN here"
-            style="display: inline-block; width: 400px; height: 300px; margin-left: 120px;"></textarea>
-        <input type="button" value="Import"
-            style="display: inline-block; vertical-align: top; margin-left: 20px; margin-top: 125px; font-size: 23px;">
+            style="display: inline-block; width: 400px; height: 300px; margin-left: 120px;" required></textarea>
+        <div style="display: inline-block; vertical-align: top; margin-top: 60px; font-size: 23px;" >
+            <legend>Which Side of this game do you want to play?</legend>
+            <input type="radio" name="color" value="white" id="white" required>
+            <label for="white">White</label>
+            <input type="radio" name="color" value="black" id="black" required>
+            <label for="black">Black</label>
+            <br>
+            <br>
+            <button type="submit">Submit</button>
+        </div>
     </form>
     
 {% endblock %}
