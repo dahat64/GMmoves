@@ -1,19 +1,28 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     Play
     
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
 
-{% block head %}
-<link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+{% block accountname %}
+
+    {{accountname}}
+
 {% endblock %}
 
+
+{% block head %}
+
+    <link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+
 {% block main %}
-    
     
     <div style="display: flex; justify-content: space-evenly; align-items: center;">
         <div style=" margin-left: 20px;">
@@ -100,4 +109,5 @@
                     window.getSelection().removeAllRanges();
                 });
     </script>
+    
 {% endblock %}

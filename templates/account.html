@@ -1,25 +1,45 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     Account
 
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
+
+{% block accountname %}
+
+    {{accountname}}
+
+{% endblock %}
+
+
+{% block head %}
+
+    <style>
+        .links {
+            text-align: center;
+            font-size: 40px;
+            text-decoration: none;
+        }
+    </style>
+
+{% endblock %}
+
 
 {% block main %}
 
         <div style="margin-top: 60px;">
-            <a href="/changeusername" style="text-align: center; font-size: 40px; text-decoration: none;">Change Username</a>
+            <a href="/changeusername" class="links">Change Username</a>
             <br>
         </div>
         <div style="margin-top: 45px;">
-            <a href="/changepassword" style="text-align: center; font-size: 40px; text-decoration: none;">Change Passsword</a>
+            <a href="/changepassword" class="links">Change Passsword</a>
             <br>
         </div>
         <div style="margin-top: 45px;">
-            <a href="/deleteaccount" style="text-align: center; font-size: 40px; text-decoration: none; color: red;">Delete Account</a>
+            <a href="/deleteaccount" class="links" style="color: red;">Delete Account</a>
         </div>
         
 {% endblock %}

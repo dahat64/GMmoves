@@ -1,15 +1,22 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     Home
 
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
+
+{% block accountname %}
+
+    {{accountname}}
+
+{% endblock %}
 
 
 {% block main %}
+
     <div id="content">
         <p style="font-size: 33px;"> Choose a grandmaster</p>
         <div style="display: flex; justify-content: space-evenly; align-items: center;">
@@ -34,5 +41,5 @@
             {% endfor %}
         </script>
     </div>
+    
 {% endblock %}
-{{namesdict[name]}}

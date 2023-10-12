@@ -1,23 +1,26 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     Import
 
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
 
-{% block head %}
+{% block accountname %}
+
+    {{accountname}}
 
 {% endblock %}
+
 
 {% block main %}
 
     <form action="/import" method="post">
         <label for="import" style="font-size: 33px;">Import a game (PGN)</label>
         <br>
-        <span class="hint-text" style="font-size: 14px;" for="username">You will be shown a random position from the game
+        <span style="font-size: 14px;" for="username">You will be shown a random position from the game
             and will have to find the best move</span>
         <br>
         <br>

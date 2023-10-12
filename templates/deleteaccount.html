@@ -1,89 +1,99 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     Delete Account
 
 {% endblock %}
 
-{% block head %}
-<style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        background-color: #f2f2f2;
-        text-align: center;
-    }
 
-    .container {
-        font-size: 20px;
-        max-width: 400px;
-        margin: 5px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+{% block accountname %}
 
-    h2 {
-        margin-bottom: 20px;
-        font-size: 40px;
-    }
+    {{accountname}}
 
-    .formitem {
-        margin-bottom: 20px;
-    }
-
-    label {
-        display: block;
-        font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-
-    .btn {
-        display: inline-block;
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-    }
-
-    .hint-text {
-        font-size: 14px;
-        color: #777;
-        margin-left: 5px;
-    }
-</style>
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
+
+{% block head %}
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        .container {
+            font-size: 20px;
+            max-width: 400px;
+            margin: 5px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 40px;
+        }
+
+        .formitem {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .hint-text {
+            font-size: 14px;
+            color: #777;
+            margin-left: 5px;
+        }
+    </style>
+
+{% endblock %}
+
 
 {% block main %}
 
-<div class="container">
-    <h2>Delete account</h2>
-    <h3 style="font-size: 20px; color: red;">WARNING: ONCE YOU CLICK "DELETE ACCOUNT" YOU CAN'T GET YOUR ACCOUNT BACK</h3>
-    <form action="/deleteaccount" method="post">
-        <div class="formitem">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="formitem">
-            <input type="submit" value="Delete Account" class="btn" style="background-color: red; color: white;">
-        </div>
-    </form>
-</div>
+    <div class="container">
+        <h2>Delete account</h2>
+        <h3 style="font-size: 20px; color: red;">WARNING: ONCE YOU CLICK "DELETE ACCOUNT" YOU CAN'T GET YOUR ACCOUNT BACK</h3>
+        <form action="/deleteaccount" method="post">
+            <div class="formitem">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="formitem">
+                <input type="submit" value="Delete Account" class="btn" style="background-color: red; color: white;">
+            </div>
+        </form>
+    </div>
 
 {% endblock %}

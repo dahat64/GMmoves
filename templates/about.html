@@ -1,42 +1,52 @@
 {% extends "layout.html" %}
 
+
 {% block title %}
 
     About
 
 {% endblock %}
 
-{% block accountname %}{{accountname}}{% endblock %}
+
+{% block accountname %}
+
+    {{accountname}}
+
+{% endblock %}
+
 
 {% block head %}
- <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        margin: 0;
-        padding: 0;
-    }
 
-    .container {
-        max-width: 800px;
-        margin: 70px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
 
-    h1 {
-        color: #333;
-    }
+        .container {
+            max-width: 800px;
+            margin: 70px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
 
-    p {
-        color: #666;
-        font-size: 24px;
-        line-height: 1.6;
-    }
-</style> 
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            font-size: 24px;
+            line-height: 1.6;
+        }
+    </style> 
+
 {% endblock %}
+
 
 {% block main %}
 
