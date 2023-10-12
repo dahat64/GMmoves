@@ -1,8 +1,8 @@
-from flask import Flask, request, redirect, session, render_template, jsonify
+from flask import Flask, request, redirect, session, render_template
 from cs50 import SQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword, uci_to_algebraic
+from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword, uci_to_algebraic, colorrange
 from flask_limiter import Limiter
 from datetime import datetime
 import ast
@@ -114,9 +114,18 @@ def play():
     if len(best_moves) > 2:
         second_best = best_moves["second_best"]
         second_eval = best_moves["second_eval"]
+    else:
+        second_best = "None"
+        second_eval = "None"
     if len(best_moves) > 4:
         third_best = best_moves["third_best"]
         third_eval = best_moves["third_eval"]
+    else:
+        third_best = "None"
+        third_eval = "None"
+
+    #This part of the code is so that two moves which are the same won't have different evaluations by the engine eg: 2.10 vs 2.30  
+
     if gmmove == best_move:
         gmeval = best_eval
     if gmmove == second_best:
@@ -133,6 +142,11 @@ def play():
     if move == third_best:
         your_eval = third_eval
         evaldone = True
+    if gmmove == move:
+        your_eval = gmeval
+        evaldone = True
+
+    #if the user's move is not the same as the 3 best engine moves and the gm move then: evaluate their move
     if not evaldone == True:
         moveuci = user_input_to_uci(move, fen)
         board = chess.Board(fen)
@@ -149,20 +163,9 @@ def play():
         gm = black
     else:
         gm = white
-    diff = float(best_eval) - float(your_eval)
-    if diff < 0.20 and diff > -0.20:
-        bgcolor = "#23A80D"
-    elif diff < 0.40 and diff > -0.40:
-        bgcolor = "#36EA19"
-    elif diff < 0.60 and diff > -0.60:
-        bgcolor = "#C6FF21" 
-    elif diff < 1.00 and diff > -1.00:
-        bgcolor = "#FCFF3E" 
-    elif diff < 2.00 and diff > -2.00:
-        bgcolor = "#FFAA00"  
-    else:
-        bgcolor = "#FF3200 "  
-    return render_template("answer.html", accountname = person[0]['username'], move = move, your_eval = your_eval, gmmove = gmmove, gmeval = gmeval, gm = gm, best_move = best_move, best_eval = best_eval, second_best = second_best, second_eval = second_eval, third_best = third_best, third_eval = third_eval, fen = fen, bgcolor= bgcolor )
+    playerevalcolor = colorrange(best_eval, your_eval)
+    gmevalcolor = colorrange(best_eval, gmeval)
+    return render_template("answer.html", accountname = person[0]['username'], move = move, your_eval = your_eval, gmmove = gmmove, gmeval = gmeval, gm = gm, best_move = best_move, best_eval = best_eval, second_best = second_best, second_eval = second_eval, third_best = third_best, third_eval = third_eval, fen = fen, playerevalcolor = playerevalcolor, gmevalcolor = gmevalcolor)
 
 @app.route("/signin", methods=["GET", "POST"])
 @limiter.limit("12 per day")
@@ -272,11 +275,8 @@ def deleteaccount():
         return render_template("deleteaccount.html", accountname = person[0]['username'])
     else:
         password = request.form.get("password")
-        confirm = request.form.get("confirm")
-        if password == "" or confirm == "":
+        if password == "":
             return apology("Please fill in the form", 400)
-        if password != confirm:
-            return apology("Password did not match re-write", 400)
         if check_password_hash(person[0]['hash'], password) == False:
             return apology("Incorrect Password", 400)
         db.execute("DELETE FROM users WHERE id = ?", session['user_id'])

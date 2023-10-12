@@ -11,10 +11,11 @@
 {% block head %}
 
     <link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
-    
+
 {% endblock %}
 
 {% block main %}
+<div  id="content">
     <div style="display: flex; justify-content: flex-start; align-items: center;">
         <div>
             <h2 style="margin-bottom: 10px; margin-left: 30px;">In This Position:</h2>
@@ -34,7 +35,7 @@
                     <th>Move</th>
                     <th>Evaluation</th>
                 </tr>
-                <tr  style="background-color: {{bgcolor}};">
+                <tr  style="background-color: {{playerevalcolor}};">
                     <td>You played:</td>
                     <td style="width: 100px;">{{move}}</td>
                     <td style="width: 100px;">{{your_eval}}</td>
@@ -46,7 +47,7 @@
                     <th>Move</th>
                     <th>Evaluation</th>
                 </tr>
-                <tr>
+                <tr style="background-color: {{gmevalcolor}};">
                     <td>"{{gm}}" played:</td>
                     <td style="width: 100px;">{{gmmove}}</td>
                     <td style="width: 100px;">{{gmeval}}</td>
@@ -76,7 +77,7 @@
             </table>
         </div>
         <div style=" margin-left: 30px;">
-            <a href="/games?player={{gm}}" style="font-size: 25px; "> <img src="/static/go-forward.png" style="width: 50px; height: auto;"><br>Another game by<br> {{gm}}</a> <br>
+            <a href="/games?player={{gm}}" style="font-size: 25px;" id="link"> <img src="/static/go-forward.png" style="width: 50px; height: auto;"><br>Another game by<br> {{gm}}</a> <br>
             <br>
             <br>
             <a href="/" style="font-size: 25px; "> <img src="/static/go-back.png" style="width: 50px; height: auto;"><br>Back to Grandmasters list</a>
@@ -99,7 +100,11 @@
             // Deselect the text
             window.getSelection().removeAllRanges();
         }); 
+        document.getElementById("link").addEventListener("click", function() { 
+            let content = document.getElementById("content")
+            content.innerHTML = '<div class="spinner-border" style="width: 3rem; height: 3rem; margin-top: 150px;" role="status"></div ><p class="sr-only" style="font-size:33px;">Analysing game...</p>'
+        })
     </script>
-
+</div>
 
 {% endblock %}

@@ -320,4 +320,18 @@ def getfirstword(str):
             firstword += char
     return firstword
 
-
+def colorrange(eval1, eval2):  
+    diff = float(eval1) - float(eval2)
+    if diff < 0.20 and diff > -0.20:
+        bgcolor = "#23A80D"
+    elif diff < 0.40 and diff > -0.40:
+        bgcolor = "#36EA19"
+    elif diff < 0.60 and diff > -0.60:
+        bgcolor = "#C6FF21" 
+    elif diff < 1.00 and diff > -1.00:
+        bgcolor = "#FCFF3E" 
+    elif diff < 2.00 and diff > -2.00:
+        bgcolor = "#FFAA00"  
+    else:
+        bgcolor = "#FF3200" 
+    return bgcolor

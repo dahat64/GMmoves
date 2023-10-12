@@ -33,6 +33,7 @@ $(document).ready(function () {
 
         // If the move is not valid, snap the piece back to the source square
         if (move === null) {
+            alert("illegal move");
             return 'snapback';
         }
 
