@@ -16,7 +16,9 @@
 Hello, world! This is a relatively new programmer's first real project. I made this web app because I think it fills a space. Unfortunately While it is completely functional, it is not ready to deploy (for reasons why go to [Future of the project](#4-future-of-the-project)). Nevertheless, I'm Incredibly proud of myself both for finishing my online computer science course (CS50x) and for finishing this project. 
 
 ## 2. Description
+Video demo: url
 ### Main
+![the index page, a list of grandmasters and a link to an import page](https://github.com/dahat64/GMmoves/static/readmeimages/index.jpg?raw=true)
 This is a flask web app. It's a chess trainer by showing the user positions of grandmaster games and the user guessing the best move of the position.
 
 The home page of the website is a list of grandmasters dynamically loaded from a txt file so that more grandmasters can be added to it at any time. There's also an import function for the user to be able to import a game themself.
