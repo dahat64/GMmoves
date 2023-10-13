@@ -96,7 +96,7 @@ This is the most important step left in the project.<br>right now the chess eval
 Note: this problem can probably be fixed even without transfering the chess evaluation to Javascript. I just don't know any way to do it. And to be honest I've already worked way too long on this project and I have to move on at somepoint.
 
 ### A search feature
-I've already loaded ≈90,000 games to a database which I could not upload to github due to file size limits, instead i uploaded a miniature database.<br>
+I've already loaded ≈90,000 games to the database.<br>
 <br>
 A search feature for this database would take the app to the next level.
 
@@ -110,6 +110,7 @@ Feel free to take any part of the code you need.
 ### CS50x
 First and foremost, the amazing CS50x staff, for teaching me all I know so far about programming. Thanks professor David J. Malan for being awesome. Thanks Harvard for providing an amazing course for free, you guys make the world a better place. 
 
+### pgnmentor.com
 ### Chess.js
 
 ### Chessboard.js
