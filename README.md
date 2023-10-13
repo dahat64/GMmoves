@@ -7,9 +7,10 @@
 - [Introduction](#1-introduction)
 - [Description](#2-description)
 - [Technologies](#3-technologies)
-- [Future of the project](#4-future-of-the-project)
-- [License](#5-license)
-- [Credits](#6-credits)
+- [Usage](#4-usage)
+- [Future of the project](#5-future-of-the-project)
+- [License](#6-license)
+- [Credits](#7-credits)
 
 ## 1. Introduction
 
@@ -25,9 +26,9 @@ After choosing a grandmaster or importing a game the user will be redirected to 
 
 In that page The user can copy the FEN(a representation of a chess position). They can also copy the PGN(a whole game of chess including info about the players and the event etc).
 
-after making a move on the board the move is submitted and evaluated against the engine and the grandmaster move.After making your move, You will be shown:<br>
-1- how your move evaluates<br>
-2- what the grandmaster played and How their move evaluates.<br>
+After making a move on the board the move is submitted and evaluated against the engine and the grandmaster move.After making your move, You will be shown:<br>
+1- How your move evaluates<br>
+2- What the grandmaster played and How their move evaluates.<br>
 3- The best move according to the engine (stockfish)<br>
 
 From this answers page the user can go to a different game by the grandmaster or go back to the list of grandmasters.
@@ -45,7 +46,7 @@ There is also an account page where the user can do these three things:<br>
 3- Jinja2 3.1.2<br>
 4- Stockfish engine
 
-more packages:<br>
+More packages:<br>
 -blinker             1.6.3<br>
 -cachelib            0.10.2<br>
 -chess               1.10.0<br>

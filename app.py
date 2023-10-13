@@ -81,7 +81,6 @@ def play():
         rows = gamesdb.execute("SELECT * FROM games WHERE id = ?", id)
         pgn = rows[0]['game']
         gameinfo = game_info(pgn, type = "text")
-        print(gameinfo)
         data = random_fen_from_pgn(pgn, color,type = "text")
         fen = data[0]
         best_moves = analyze_position(fen, 20, 3)
