@@ -14,7 +14,7 @@
 
 ## 1. Introduction
 
-Hello, world! This is a relatively new programmer's first real project. I made this web app because I think it fills a space. Unfortunately While it is completely functional, it is not ready to deploy (for reasons why go to [Future of the project](#future-of-the-project)). Nevertheless, I'm Incredibly proud of myself both for finishing my online computer science course (CS50x) and for finishing this project. 
+Hello, world! This is a relatively new programmer's first real project. I made this web app because I think it fills a space. Unfortunately While it is completely functional, it is not ready to deploy (for reasons why go to [Future of the project](#5-future-of-the-project)). Nevertheless, I'm Incredibly proud of myself both for finishing my online computer science course (CS50x) and for finishing this project. 
 
 ## 2. Description
 ### Main
