@@ -27,11 +27,11 @@ After choosing a grandmaster or importing a game the user will be redirected to 
 In that page The user can copy the FEN(a representation of a chess position). They can also copy the PGN(a whole game of chess including info about the players and the event etc).
 
 After making your move, You will be shown:<br>
-1- How your move evaluates<br>
+1- How your move evaluates.<br>
 2- What the grandmaster played and How their move evaluates.<br>
-3- The best move according to the engine (stockfish)<br>
+3- The best move according to the engine(stockfish).<br>
 
-From this answers page the user can go to a different game by the grandmaster or go back to the list of grandmasters.
+From this answers page the user can go to a different game by the same grandmaster or go back to the list of grandmasters.
 
 ### Account and Session
 The app uses  the Flask-Session library for session features.
@@ -78,11 +78,11 @@ More packages:<br>
 -wrapt               1.15.0<br>
 
 ## 4. Usage:
-1- Install the source code @github/...<br>
+1- Download the source code at: https://github.com/dahat64/GMmoves<br>
 2- Open it using a code editor like VSCODE.<br>
 3- Install python.<br>
 4- Use the command: `pip install <package name>` to install the necessary packages mentioned above.<br>
-5- Run the app using either<br>
+5- Run the app using either:<br>
 &nbsp; &nbsp; 1- Running the app.py file<br>
 &nbsp; &nbsp; 2- Using flask `flask --app app run`<br>
 
@@ -97,7 +97,6 @@ Note: this problem can probably be fixed even without transfering the chess eval
 
 ### A search feature
 I've already loaded ≈90,000 games to the database.<br>
-<br>
 A search feature for this database would take the app to the next level.
 
 ### Responsiveness
@@ -108,7 +107,7 @@ Feel free to take any part of the code you need.
 
 ## 7. Credits
 ### CS50x
-First and foremost, the amazing CS50x staff, for teaching me all I know so far about programming. Thanks professor David J. Malan for being awesome. Thanks Harvard for providing an amazing course for free, you guys make the world a better place. 
+First and foremost, the amazing CS50x staff, for teaching me all I know so far about programming. Thanks professor David J. Malan for being awesome. Thanks Harvard for providing an amazing course for free.
 
 ### pgnmentor.com
 ### Chess.js
