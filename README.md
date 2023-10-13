@@ -26,7 +26,7 @@ After choosing a grandmaster or importing a game the user will be redirected to 
 
 In that page The user can copy the FEN(a representation of a chess position). They can also copy the PGN(a whole game of chess including info about the players and the event etc).
 
-After making a move on the board the move is submitted and evaluated against the engine and the grandmaster move.After making your move, You will be shown:<br>
+After making your move, You will be shown:<br>
 1- How your move evaluates<br>
 2- What the grandmaster played and How their move evaluates.<br>
 3- The best move according to the engine (stockfish)<br>
