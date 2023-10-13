@@ -23,15 +23,15 @@ This is a flask web app. It's a chess trainer by showing the user positions of g
 The home page of the website is a list of grandmasters dynamically loaded from a txt file so that more grandmasters can be added to it at any time. There's also an import function for the user to be able to import a game themself.
 
 
-![the index page, a list of grandmasters and a link to an import page](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/index.png)
+![the index page, a list of grandmasters and a link to an import page](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/index.png)
 
-![a webpage with a text area to import a pgn game](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/import.png)
+![a webpage with a text area to import a pgn game](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/import.png)
 
 After choosing a grandmaster or importing a game the user will be redirected to a random position from the game using a function I coded called (random_fen_from_pgn). 
 
 In that page The user can copy the FEN(a representation of a chess position). They can also copy the PGN(a whole game of chess including info about the players and the event etc).
 
-![a webpage, a chessboard in the middle, a table of the game's info on the left, options to copy fen and pgn on the right](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/play.png)
+![a webpage, a chessboard in the middle, a table of the game's info on the left, options to copy fen and pgn on the right](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/play.png)
 
 After making your move, You will be shown:<br>
 1- How your move evaluates.<br>
@@ -40,12 +40,12 @@ After making your move, You will be shown:<br>
 
 From this answers page the user can go to a different game by the same grandmaster or go back to the list of grandmasters.
 
-![a webpage with a table of evaluations of the chess moves in the middle, a chessboard on the left, on the right: options to go to a different game by the grandmaster or go back to list of grandmasters](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/answer.png)
+![a webpage with a table of evaluations of the chess moves in the middle, a chessboard on the left, on the right: options to go to a different game by the grandmaster or go back to list of grandmasters](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/answer.png)
 ### Account and Session
 
-![a sign up page](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/signup.png)
+![a sign up page](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/signup.png)
 
-![a sign in page](https://github.com/dahat64/GMmoves/tree/master/static/readmeimages/signin.png)
+![a sign in page](https://github.com/dahat64/GMmoves/blob/master/static/readmeimages/signin.png)
 The app uses  the Flask-Session library for session features.
 There is also an account page where the user can do these three things:<br>
 1- Change their Username<br>
