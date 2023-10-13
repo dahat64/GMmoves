@@ -6,15 +6,14 @@
 
 - [Introduction](#1-introduction)
 - [Description](#2-description)
-- [Technologies](#3-technologies)
-- [Usage](#4-usage)
-- [Future of the project](#5-future-of-the-project)
-- [License](#6-license)
-- [Credits](#7-credits)
+- [Usage](#3-usage)
+- [Future of the project](#4-future-of-the-project)
+- [License](#5-license)
+- [Credits](#6-credits)
 
 ## 1. Introduction
 
-Hello, world! This is a relatively new programmer's first real project. I made this web app because I think it fills a space. Unfortunately While it is completely functional, it is not ready to deploy (for reasons why go to [Future of the project](#5-future-of-the-project)). Nevertheless, I'm Incredibly proud of myself both for finishing my online computer science course (CS50x) and for finishing this project. 
+Hello, world! This is a relatively new programmer's first real project. I made this web app because I think it fills a space. Unfortunately While it is completely functional, it is not ready to deploy (for reasons why go to [Future of the project](#4-future-of-the-project)). Nevertheless, I'm Incredibly proud of myself both for finishing my online computer science course (CS50x) and for finishing this project. 
 
 ## 2. Description
 ### Main
@@ -40,53 +39,29 @@ There is also an account page where the user can do these three things:<br>
 2- Change their Password<br>
 3- Delete their Account
 
-## 3. Technologies
-1- Python 3.11<br>
-2- Flask 3.0<br>
-3- Jinja2 3.1.2<br>
-4- Stockfish engine
-
-More packages:<br>
--blinker             1.6.3<br>
--cachelib            0.10.2<br>
--chess               1.10.0<br>
--click               8.1.7<br>
--colorama            0.4.6<br>
--cs50                9.2.6<br>
--Deprecated          1.2.14<br>
--Flask               3.0.0<br>
--Flask-Limiter       3.5.0<br>
--Flask-Session       0.5.0<br>
--greenlet            3.0.0<br>
--importlib-resources 6.1.0<br>
--itsdangerous        2.1.2<br>
--Jinja2              3.1.2<br>
--limits              3.6.0<br>
--markdown-it-py      3.0.0<br>
--MarkupSafe          2.1.3<br>
--mdurl               0.1.2<br>
--ordered-set         4.1.0<br>
--packaging           23.2<br>
--Pygments            2.16.1<br>
--rich                13.6.0<br>
--SQLAlchemy          1.4.46<br>
--sqlparse            0.4.4<br>
--termcolor           2.3.0<br>
--typing_extensions   4.8.0<br>
--Werkzeug            3.0.0<br>
--wheel               0.41.2<br>
--wrapt               1.15.0<br>
-
-## 4. Usage:
+## 3. Usage
 1- Download the source code at: https://github.com/dahat64/GMmoves<br>
-2- Open it using a code editor like VSCODE.<br>
-3- Install python.<br>
-4- Use the command: `pip install <package name>` to install the necessary packages mentioned above.<br>
-5- Run the app using either:<br>
-&nbsp; &nbsp; 1- Running the app.py file<br>
-&nbsp; &nbsp; 2- Using flask `flask --app app run`<br>
+2- IMPORTANT! Download these two files manually: "users.db" and "pgn.db" from the repository and add them to the same folder to replace the old ones!<br>
+3- Open the folder using a code editor like VSCODE.<br>
+4- Install python.<br>
+5- Use the commands to install the necessary packages:<br>
+```
+pip install flask
+pip install flask_session
+pip install cs50
+pip install chess
+pip install flask_limiter
+```
+6- Run the app using one of these commands:<br>
+```
+python app.py
 
-## 5. Future of the project
+flask --app app run
+```
+
+
+
+## 4. Future of the project
 
 The app needs more work before being ready to deploy mainly:
 
@@ -102,10 +77,10 @@ A search feature for this database would take the app to the next level.
 ### Responsiveness
 The web app is not responsive And only works on desktop due to my lacking skills in web development.
 
-## 6. License
+## 5. License
 Feel free to take any part of the code you need. 
 
-## 7. Credits
+## 6. Credits
 ### CS50x
 First and foremost, the amazing CS50x staff, for teaching me all I know so far about programming. Thanks professor David J. Malan for being awesome. Thanks Harvard for providing an amazing course for free.
 
