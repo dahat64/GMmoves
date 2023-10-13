@@ -36,7 +36,7 @@
             let content = document.getElementById("content");
             {% for name in namesdict %}
             document.getElementById("{{namesdict[name]}}").addEventListener("click", function () {
-                content.innerHTML = '<div class="spinner-border" style="width: 3rem; height: 3rem; margin-top: 150px;" role="status"></div ><p class="sr-only" style="font-size:33px;">Analysing game...</p>'
+                content.innerHTML = '<div class="spinner-border" style="width: 3rem; height: 3rem; margin-top: 150px;" role="status"></div ><p class="sr-only" style="font-size:33px;">Analysing position...</p>'
             });
             {% endfor %}
         </script>

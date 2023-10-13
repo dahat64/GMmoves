@@ -4,7 +4,6 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helper import apology, login_required, duplicateUsernameCheck, analyze_position, random_fen_from_pgn, game_info, user_input_to_uci, listoflines, getfirstword, uci_to_algebraic, colorrange
 from flask_limiter import Limiter
-from datetime import datetime
 import ast
 import chess
 import random
@@ -40,7 +39,7 @@ def after_request(response):
     return response
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 @login_required
 def index():
     person = db.execute("SELECT * FROM users WHERE id = ?", session['user_id'])
@@ -52,8 +51,7 @@ def index():
     for name in names:
         namesdict[name] = namesnospaces[i]
         i += 1
-    if request.method == "GET":
-        return render_template("index.html", accountname = person[0]['username'], namesdict = namesdict)
+    return render_template("index.html", accountname = person[0]['username'], namesdict = namesdict)
 
 @app.route("/games")
 @login_required
@@ -83,6 +81,7 @@ def play():
         rows = gamesdb.execute("SELECT * FROM games WHERE id = ?", id)
         pgn = rows[0]['game']
         gameinfo = game_info(pgn, type = "text")
+        print(gameinfo)
         data = random_fen_from_pgn(pgn, color,type = "text")
         fen = data[0]
         best_moves = analyze_position(fen, 20, 3)
@@ -96,9 +95,6 @@ def play():
         event = gameinfo['event']
         whiteElo = gameinfo['whiteElo']
         blackElo = gameinfo['blackElo']
-        date= date.replace('??', '01')
-        date = datetime.strptime(date, "%Y.%m.%d")
-        date = date.strftime("%Y %B %-d")
         return render_template("play.html", color = color,date = date,event = event, white = white, whiteElo = whiteElo, blackElo = blackElo, black = black, result = result, gmmove = gmmove, gmeval = gmeval, best_moves = best_moves, accountname = person[0]['username'], fen = fen, pgn = pgn)
     fen = request.form.get("fen")
     white = request.form.get("white")
@@ -124,8 +120,7 @@ def play():
         third_best = "None"
         third_eval = "None"
 
-    #This part of the code is so that two moves which are the same won't have different evaluations by the engine eg: 2.10 vs 2.30  
-
+    #The following part of the code is so that two moves which are the same won't have different evaluations by the engine eg: 2.10 vs 2.30  
     if gmmove == best_move:
         gmeval = best_eval
     if gmmove == second_best:
@@ -168,19 +163,21 @@ def play():
     return render_template("answer.html", accountname = person[0]['username'], move = move, your_eval = your_eval, gmmove = gmmove, gmeval = gmeval, gm = gm, best_move = best_move, best_eval = best_eval, second_best = second_best, second_eval = second_eval, third_best = third_best, third_eval = third_eval, fen = fen, playerevalcolor = playerevalcolor, gmevalcolor = gmevalcolor)
 
 @app.route("/signin", methods=["GET", "POST"])
-@limiter.limit("12 per day")
+@limiter.limit("20 per day")
 def signin():
     session.clear()
     if request.method == "GET":
         return render_template("signin.html")
     else:
-        rows = db.execute("SELECT * FROM users")
         username = request.form.get("username")
         password = request.form.get("password")
         if username == "" or password == "":
             return apology("Please type in your username and password", 400)
+        rows = db.execute("SELECT * FROM users")
+        
         if duplicateUsernameCheck(username, rows) == False:
             return apology("Invalid username or password", 400)
+        
         person = db.execute("SELECT * FROM users WHERE username = ?", username)
         if check_password_hash(person[0]['hash'], password) == False:
             return apology("Invalid username or password", 400)
@@ -258,14 +255,12 @@ def changepassword():
         confirm = request.form.get("confirm")
         if oldpassword == "" or newpassword == "" or confirm == "":
             return apology("Please Fill in the form", 400)
-        rows = db.execute("SELECT * FROM users")
         if newpassword != confirm:
             return apology("New password did not match Re-write", 400)
         if check_password_hash(person[0]['hash'], oldpassword) == False:
             return apology("Incorrect Password", 400)
         db.execute("UPDATE users SET hash = ? WHERE id = ?", generate_password_hash(newpassword), session['user_id'])
-        message = "Password successfully changed"
-        return render_template("message.html", message = message, accountname = person[0]['username'])
+        return render_template("message.html", message = "Password successfully changed", accountname = person[0]['username'])
 
 @app.route("/deleteaccount", methods=["get", "post"])
 @login_required

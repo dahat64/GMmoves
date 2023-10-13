@@ -17,14 +17,15 @@
 
 {% block head %}
 
-    <link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
     <style>
         .mytable {
             font-size: 25px;
-             width: 600px; 
-             margin-bottom: 50px;
+            width: 600px; 
+            margin-bottom: 50px;
         }
     </style>
+
+    <link href="{{ url_for('static', filename='chessboard.js/css/chessboard-1.0.0.css') }}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ url_for('static', filename='chessboard.js/js/chessboard-1.0.0.js') }}"></script>
     <script src="{{ url_for('static', filename='unpkg/chess.js') }}"></script>
@@ -52,7 +53,7 @@
                         <th>Evaluation</th>
                     </tr>
                     <tr style="background-color: {{playerevalcolor}};">
-                      <td>You played:</td>
+                        <td>You played:</td>
                         <td style="width: 100px;">{{move}}</td>
                         <td style="width: 100px;">{{your_eval}}</td>
                     </tr>
@@ -118,7 +119,7 @@
             }); 
             document.getElementById("newgamelink").addEventListener("click", function() { 
                 let content = document.getElementById("content")
-                content.innerHTML = '<div class="spinner-border" style="width: 3rem; height: 3rem; margin-top: 150px;" role="status"></div ><p class="sr-only" style="font-size:33px;">Analysing game...</p>'
+                content.innerHTML = '<div class="spinner-border" style="width: 3rem; height: 3rem; margin-top: 150px;" role="status"></div ><p class="sr-only" style="font-size:33px;">Analysing position...</p>'
             })
         </script>
     </div>

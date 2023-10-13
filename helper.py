@@ -6,7 +6,6 @@ import chess.pgn
 from flask import redirect, render_template, session
 from functools import wraps
 import os
-from cs50 import SQL
 import io
 
 def login_required(f):
@@ -54,8 +53,6 @@ def analyze_position(fen_position, depth = 20, lines = 3):
     Returns:
         dict: A dictionary containing the analysis information.
     """
-
-    # Redirect stdout to an in-memory buffer
 
     with chess.engine.SimpleEngine.popen_uci("stockfish/stockfish-windows-x86-64-modern.exe") as engine:
         board = chess.Board(fen_position)
@@ -161,7 +158,6 @@ def random_fen_from_pgn(pgn, color, type = "file"):
       
 def user_input_to_uci(move_input, fen):
     board = chess.Board(fen)
-
     # Try to convert the user-friendly input to UCI for standard moves
     try:
         move = board.parse_san(move_input)
@@ -174,7 +170,6 @@ def user_input_to_uci(move_input, fen):
             return move.uci()
         except ValueError:
             pass
-
     # Handle promotion moves (e.g., "e8=Q", "e8+")
     if "=" in move_input or "+" in move_input:
         # Check if the move ends with a promotion piece (Q, R, B, N)
@@ -189,7 +184,6 @@ def user_input_to_uci(move_input, fen):
                     from_square = move.from_square
                     move = chess.Move(from_square, chess.parse_square(dest_square), promotion=chess.Piece.from_symbol(promotion))
                     return move.uci()
-
     # Handle invalid input
     return None
 
@@ -197,12 +191,10 @@ def uci_to_algebraic(moveuci, fen):
     board = chess.Board(fen)
     move = chess.Move.from_uci(moveuci)
     algebraic_move = board.san(move)
-    print(f"aklsdfjalsdfjalsdjfasl;dkfjas;ldfjkalsdkfjalsdfkjasl;dkfjasdkj{algebraic_move}")
     return algebraic_move
 
 
 def game_info(pgn, type = "file"):
-    # Create a PGN database to read games from the file
     if type == "file":
         with open(pgn) as pgn:
             pgn_game = chess.pgn.read_game(pgn)
@@ -245,7 +237,7 @@ def game_info(pgn, type = "file"):
         
 
 
-def read_pgn_files_in_folder(folder_path):
+def read_pgn_files_in_folder(folder_path, database):
     try:
         # List all files in the folder
         file_list = os.listdir(folder_path)
@@ -264,15 +256,15 @@ def read_pgn_files_in_folder(folder_path):
             try:
                 with open(file_path, 'r') as pgn_file:
                     pgn_content = pgn_file.read()
-                    info = game_info(file_path)
+                    info = game_info(file_path, type="file")
                     white = info['white']
                     black = info['black']
 
                     try:
-                        alreadyexists = pgn.execute("SELECT filename FROM games WHERE content = ?", pgn_content)
+                        alreadyexists = database.execute("SELECT filename FROM games WHERE content = ?", pgn_content)
                         test = alreadyexists[0]
                     except IndexError:
-                        pgn.execute("INSERT INTO games(filename, content, white, black) VALUES (?,?,?,?)", filename, pgn_content, white, black)
+                        database.execute("INSERT INTO games(filename, content, white, black) VALUES (?,?,?,?)", filename, pgn_content, white, black)
 
             except Exception as e:
                 print(f"Error reading {pgn_file}: {e}")
@@ -286,7 +278,6 @@ def pgn_parse(file_path):
             game = chess.pgn.read_game(pgnfile)
             if game is None:
                 break
-            print(game)
 
 
 def listoflines(filename, mode):
